@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import os
 
 pygame.init()
 
@@ -9,15 +10,18 @@ width, height = 700, 700
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("GTA VI ALPHA PRE-BUILD 2.5.234")
 
+# Configurações de pasta de assets
+assets_folder = os.path.join(os.path.dirname(__file__), 'assets')
+
 # Carregar o background
-background = pygame.image.load("fundo.png").convert()
+background = pygame.image.load(os.path.join(assets_folder, "fundo.png")).convert()
 
 # Carregar os sprites
-sem1 = pygame.image.load("semaforo.png").convert_alpha()
-sem2 = pygame.image.load("semaforo.png").convert_alpha()
-sem3 = pygame.image.load("semaforo.png").convert_alpha()
-sem4 = pygame.image.load("semaforo.png").convert_alpha()
-carro = pygame.image.load("carro.png").convert_alpha()
+sem1 = pygame.image.load(os.path.join(assets_folder, "semaforo.png")).convert_alpha()
+sem2 = pygame.image.load(os.path.join(assets_folder, "semaforo.png")).convert_alpha()
+sem3 = pygame.image.load(os.path.join(assets_folder, "semaforo.png")).convert_alpha()
+sem4 = pygame.image.load(os.path.join(assets_folder, "semaforo.png")).convert_alpha()
+carro = pygame.image.load(os.path.join(assets_folder, "carro.png")).convert_alpha()
 carro2 = pygame.transform.rotate(carro, 180)
 carro3 = pygame.transform.rotate(carro, -90)
 carro4 = pygame.transform.rotate(carro, 90)
@@ -48,13 +52,7 @@ sprites = [(sem1, (200, 150)), (sem2, (100, 450)), (sem3, (500, 150)), (sem4, (4
 
 # Controle de tempo para gerar novos carros
 tempo_para_novo_carro = 5000
-tempo_acumulado = pygame.time.get_ticks()  # Começar com o tempo atual
-
-# Contador inicial para mostrar na tela
-fonte_gta = pygame.font.Font("gta_font.ttf", 48)  # Substitua "gta_font.ttf" pelo caminho real da fonte GTA
-contador_texto = fonte_gta.render("5", True, (255, 255, 255))  # Contagem regressiva inicial
-contador_rect = contador_texto.get_rect(center=(350, 350))
-tempo_inicial = pygame.time.get_ticks()
+tempo_acumulado = 0
 
 # Velocidade dos carros
 velocidade_carro = 0.5
@@ -94,19 +92,8 @@ while True:
     # Remover carros que saíram da tela
     sprites = [(sprite, pos) for (sprite, pos) in sprites if 0 <= pos[0] <= width and 0 <= pos[1] <= height]
 
-    # Atualizar o contador inicial
-    tempo_decorrido_total = (pygame.time.get_ticks() - tempo_inicial) // 1000  # Tempo decorrido em segundos
-    if tempo_decorrido_total < 5:  # Mostrar a contagem regressiva inicial
-        contador_texto = fonte_gta.render(f"{5 - tempo_decorrido_total}", True, (255, 255, 255))
-    else:
-        contador_texto = None  # Não renderizar o contador
-
     # Desenhar o background
     screen.blit(background, (0, 0))
-
-    # Desenhar o contador
-    if contador_texto:
-        screen.blit(contador_texto, contador_rect)
 
     # Desenhar os sprites
     for sprite, pos in sprites:
