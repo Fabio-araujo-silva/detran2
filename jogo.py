@@ -19,25 +19,24 @@ sem3 = pygame.image.load("semaforo.png").convert_alpha()
 sem4 = pygame.image.load("semaforo.png").convert_alpha()
 carro = pygame.image.load("carro.png").convert_alpha()
 
-# Posições iniciais dos sprites
-sem1_pos = (100, 100)
-sem2_pos = (200, 200)
-sem3_pos = (300, 300)
-sem4_pos = (400, 400)
-carro_pos = (500, 500)
+# Redimensionar os sprites
+novo_largura_sem, novo_altura_sem = 100, 100
+novo_largura_carro, novo_altura_carro = 50, 93
+sem1 = pygame.transform.scale(sem1, (novo_largura_sem, novo_altura_sem))
+sem2 = pygame.transform.scale(sem2, (novo_largura_sem, novo_altura_sem))
+sem3 = pygame.transform.scale(sem3, (novo_largura_sem, novo_altura_sem))
+sem4 = pygame.transform.scale(sem4, (novo_largura_sem, novo_altura_sem))
+carro = pygame.transform.scale(carro, (novo_largura_carro, novo_altura_carro))
 
-# Carregar os sprites e redimensioná-los
-novo_largura_sem, novo_altura_sem = 50,50
-novo_largura_carro, novo_altura_carro = 50,93
-sem1 = pygame.transform.scale(pygame.image.load("semaforo.png").convert_alpha(), (novo_largura_sem, novo_altura_sem))
-sem2 = pygame.transform.scale(pygame.image.load("semaforo.png").convert_alpha(), (novo_largura_sem, novo_altura_sem))
-sem3 = pygame.transform.scale(pygame.image.load("semaforo.png").convert_alpha(), (novo_largura_sem, novo_altura_sem))
-sem4 = pygame.transform.scale(pygame.image.load("semaforo.png").convert_alpha(), (novo_largura_sem, novo_altura_sem))
-carro = pygame.transform.scale(pygame.image.load("carro.png").convert_alpha(), (novo_largura_carro, novo_altura_carro))
-
+# Posição inicial do carro
+carro_inicial_pos = (290, 0)
 
 # Lista de sprites e suas posições
-sprites = [(sem1, sem1_pos), (sem2, sem2_pos), (sem3, sem3_pos), (sem4, sem4_pos), (carro, carro_pos)]
+sprites = [(sem1, (200, 150)), (sem2, (100, 450)), (sem3, (500, 150)), (sem4, (400, 450)), (carro, carro_inicial_pos)]
+
+# Controle de tempo para gerar novos carros
+tempo_para_novo_carro = 3000  # Tempo em milissegundos (1 segundo = 1000 milissegundos)
+tempo_acumulado = 0
 
 # Loop principal
 while True:
@@ -45,6 +44,25 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
+    # Atualizar a posição dos carros existentes
+    for i, (sprite, pos) in enumerate(sprites):
+        if sprite == carro:  # Ajustar apenas a posição do carro
+            nova_posicao = (pos[0], pos[1] + 1)  # Movendo o carro para baixo
+            sprites[i] = (sprite, nova_posicao)
+
+    # Controle de tempo para gerar novos carros
+    tempo_passado = pygame.time.get_ticks()
+    tempo_decorrido = tempo_passado - tempo_acumulado
+
+    # Gerar um novo carro a cada segundo
+    if tempo_decorrido > tempo_para_novo_carro:
+        novo_sprite, nova_posicao = carro, carro_inicial_pos
+        sprites.append((novo_sprite, nova_posicao))
+        tempo_acumulado = tempo_passado
+
+    # Remover carros que saíram da tela
+    sprites = [(sprite, pos) for (sprite, pos) in sprites if 0 <= pos[0] <= width and 0 <= pos[1] <= height]
 
     # Desenhar o background
     screen.blit(background, (0, 0))
