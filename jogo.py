@@ -51,11 +51,11 @@ carros = [(carro, carro_inicial_pos), (carro2, carro2_inicial_pos), (carro3, car
 sprites = [(sem1, (200, 150)), (sem2, (100, 450)), (sem3, (500, 150)), (sem4, (400, 450))]
 
 # Controle de tempo para gerar novos carros
-tempo_para_novo_carro = 5000
+tempo_para_novo_carro = 3000
 tempo_acumulado = 0
 
 # Velocidade dos carros
-velocidade_carro = 0.5
+velocidade_carro = 1
 
 # Loop principal
 clock = pygame.time.Clock()
