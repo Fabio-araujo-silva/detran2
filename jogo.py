@@ -1,7 +1,7 @@
 import pygame
 import sys
+import random
 
-# Inicialização do Pygame
 pygame.init()
 
 # Configurações da tela
@@ -31,8 +31,8 @@ sem3 = pygame.transform.scale(sem3, (novo_largura_sem, novo_altura_sem))
 sem4 = pygame.transform.scale(sem4, (novo_largura_sem, novo_altura_sem))
 carro = pygame.transform.scale(carro, (novo_largura_carro, novo_altura_carro))
 carro2 = pygame.transform.scale(carro2, (novo_largura_carro, novo_altura_carro))
-carro3 = pygame.transform.scale(carro3, (novo_altura_carro,novo_largura_carro))
-carro4 = pygame.transform.scale(carro4, (novo_altura_carro,novo_largura_carro))
+carro3 = pygame.transform.scale(carro3, (novo_altura_carro, novo_largura_carro))
+carro4 = pygame.transform.scale(carro4, (novo_altura_carro, novo_largura_carro))
 
 # Posição inicial do carro
 carro_inicial_pos = (290, 0)
@@ -40,17 +40,21 @@ carro2_inicial_pos = (350, 700)
 carro3_inicial_pos = (700, 300)
 carro4_inicial_pos = (0, 370)
 
+# Lista de carros e suas posições iniciais
+carros = [(carro, carro_inicial_pos), (carro2, carro2_inicial_pos), (carro3, carro3_inicial_pos), (carro4, carro4_inicial_pos)]
+
 # Lista de sprites e suas posições
-sprites = [(sem1, (200, 150)), (sem2, (100, 450)), (sem3, (500, 150)), (sem4, (400, 450)), (carro, carro_inicial_pos), (carro2, carro2_inicial_pos), (carro3, carro3_inicial_pos), (carro4, carro4_inicial_pos)]
+sprites = [(sem1, (200, 150)), (sem2, (100, 450)), (sem3, (500, 150)), (sem4, (400, 450))]
 
 # Controle de tempo para gerar novos carros
 tempo_para_novo_carro = 5000
 tempo_acumulado = 0
 
 # Velocidade dos carros
-velocidade_carro = 0.05
+velocidade_carro = 0.5
 
 # Loop principal
+clock = pygame.time.Clock()
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -59,17 +63,15 @@ while True:
 
     # Atualizar a posição dos carros existentes
     for i, (sprite, pos) in enumerate(sprites):
-        if sprite == carro:  # Ajustar apenas a posição do carro
-            nova_posicao = (pos[0], pos[1] + velocidade_carro)  # Movendo o carro para baixo
-            sprites[i] = (sprite, nova_posicao)
-        elif sprite == carro2:
-            nova_posicao = (pos[0], pos[1] - velocidade_carro)  # Movendo o carro para cima
-            sprites[i] = (sprite, nova_posicao)
-        elif sprite == carro3:
-            nova_posicao = (pos[0] - velocidade_carro, pos[1])  # Movendo o carro para a esquerda
-            sprites[i] = (sprite, nova_posicao)
-        elif sprite == carro4:
-            nova_posicao = (pos[0] + velocidade_carro, pos[1])  # Movendo o carro para a direita
+        if sprite in (carro, carro2, carro3, carro4):  # Verificar se é um carro
+            if sprite == carro:  # Movendo o carro para baixo
+                nova_posicao = (pos[0], pos[1] + velocidade_carro)
+            elif sprite == carro2:  # Movendo o carro para cima
+                nova_posicao = (pos[0], pos[1] - velocidade_carro)
+            elif sprite == carro3:  # Movendo o carro para a esquerda
+                nova_posicao = (pos[0] - velocidade_carro, pos[1])
+            elif sprite == carro4:  # Movendo o carro para a direita
+                nova_posicao = (pos[0] + velocidade_carro, pos[1])
             sprites[i] = (sprite, nova_posicao)
 
     # Controle de tempo para gerar novos carros
@@ -78,15 +80,8 @@ while True:
 
     # Gerar um novo carro a cada segundo
     if tempo_decorrido > tempo_para_novo_carro:
-        # Alternar entre os carros
-        if len(sprites) % 4 == 0:
-            novo_sprite, nova_posicao = carro, carro_inicial_pos
-        elif len(sprites) % 4 == 1:
-            novo_sprite, nova_posicao = carro2, carro2_inicial_pos
-        elif len(sprites) % 4 == 2:
-            novo_sprite, nova_posicao = carro3, carro3_inicial_pos
-        else:
-            novo_sprite, nova_posicao = carro4, carro4_inicial_pos
+        # Selecionar um carro e sua posição inicial aleatoriamente
+        novo_sprite, nova_posicao = random.choice(carros)
         sprites.append((novo_sprite, nova_posicao))
         tempo_acumulado = tempo_passado
 
@@ -101,3 +96,5 @@ while True:
         screen.blit(sprite, pos)
 
     pygame.display.flip()
+
+    clock.tick(60)  # Limitar a taxa de quadros para 60 FPS
