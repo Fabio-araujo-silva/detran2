@@ -66,6 +66,13 @@ tempo_acumulado = 0
 # Velocidade dos carros
 velocidade_carro = 1
 
+# Carregar a imagem do Game Over
+game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.jpg")).convert_alpha()
+game_over_rect = game_over_image.get_rect(center=(width // 2, height // 2))
+
+# Variável de controle do estado do jogo
+game_over = False
+
 # Loop principal
 clock = pygame.time.Clock()
 while True:
@@ -74,39 +81,55 @@ while True:
             pygame.quit()
             sys.exit()
 
-    # Atualizar a posição dos carros existentes
-    for i, (sprite, pos) in enumerate(sprites):
-        if sprite in (carro, carro2, carro3, carro4):  # Verificar se é um carro
-            if sprite == carro:  # Movendo o carro para baixo
-                nova_posicao = (pos[0], pos[1] + velocidade_carro)
-            elif sprite == carro2:  # Movendo o carro para cima
-                nova_posicao = (pos[0], pos[1] - velocidade_carro)
-            elif sprite == carro3:  # Movendo o carro para a esquerda
-                nova_posicao = (pos[0] - velocidade_carro, pos[1])
-            elif sprite == carro4:  # Movendo o carro para a direita
-                nova_posicao = (pos[0] + velocidade_carro, pos[1])
-            sprites[i] = (sprite, nova_posicao)
+    if not game_over:
+        # Atualizar a posição dos carros existentes
+        for i, (sprite, pos) in enumerate(sprites):
+            if sprite in (carro, carro2, carro3, carro4):  # Verificar se é um carro
+                if sprite == carro:  # Movendo o carro para baixo
+                    nova_posicao = (pos[0], pos[1] + velocidade_carro)
+                elif sprite == carro2:  # Movendo o carro para cima
+                    nova_posicao = (pos[0], pos[1] - velocidade_carro)
+                elif sprite == carro3:  # Movendo o carro para a esquerda
+                    nova_posicao = (pos[0] - velocidade_carro, pos[1])
+                elif sprite == carro4:  # Movendo o carro para a direita
+                    nova_posicao = (pos[0] + velocidade_carro, pos[1])
+                sprites[i] = (sprite, nova_posicao)
 
-    # Controle de tempo para gerar novos carros
-    tempo_passado = pygame.time.get_ticks()
-    tempo_decorrido = tempo_passado - tempo_acumulado
+        # Controle de tempo para gerar novos carros
+        tempo_passado = pygame.time.get_ticks()
+        tempo_decorrido = tempo_passado - tempo_acumulado
 
-    # Gerar um novo carro a cada segundo
-    if tempo_decorrido > tempo_para_novo_carro:
-        # Selecionar um carro e sua posição inicial aleatoriamente
-        novo_sprite, nova_posicao = random.choice(carros)
-        sprites.append((novo_sprite, nova_posicao))
-        tempo_acumulado = tempo_passado
+        # Gerar um novo carro a cada segundo
+        if tempo_decorrido > tempo_para_novo_carro:
+            # Selecionar um carro e sua posição inicial aleatoriamente
+            novo_sprite, nova_posicao = random.choice(carros)
+            sprites.append((novo_sprite, nova_posicao))
+            tempo_acumulado = tempo_passado
 
-    # Remover carros que saíram da tela
-    sprites = [(sprite, pos) for (sprite, pos) in sprites if 0 <= pos[0] <= width and 0 <= pos[1] <= height]
+        # Verificar colisão entre os carros
+        for i, (sprite1, pos1) in enumerate(sprites):
+            for j, (sprite2, pos2) in enumerate(sprites):
+                if i != j and sprite1 in (carro, carro2, carro3, carro4) and sprite2 in (carro, carro2, carro3, carro4):
+                    sprite1_rect = pygame.Rect(pos1, sprite1.get_size())
+                    sprite2_rect = pygame.Rect(pos2, sprite2.get_size())
+
+                    if sprite1_rect.colliderect(sprite2_rect):
+                        game_over = True
+
+        # Remover carros que saíram da tela
+        sprites = [(sprite, pos) for (sprite, pos) in sprites if 0 <= pos[0] <= width and 0 <= pos[1] <= height]
+
 
     # Desenhar o background
     screen.blit(background, (0, 0))
 
-    # Desenhar os sprites
-    for sprite, pos in sprites:
-        screen.blit(sprite, pos)
+    if game_over:
+        # Se o jogo estiver no estado de Game Over, exibir a tela de Game Over
+        screen.blit(game_over_image, game_over_rect)
+    else:
+        # Se o jogo não estiver no estado de Game Over, desenhar os sprites
+        for sprite, pos in sprites:
+            screen.blit(sprite, pos)
 
     pygame.display.flip()
 
