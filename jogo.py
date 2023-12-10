@@ -13,6 +13,15 @@ pygame.display.set_caption("GTA VI ALPHA PRE-BUILD 2.5.234")
 # Configurações de pasta de assets
 assets_folder = os.path.join(os.path.dirname(__file__), 'assets')
 
+# Carregar música de fundo
+pygame.mixer.music.load(os.path.join(assets_folder, 'musica.mp3'))
+
+# Definir o volume da música
+pygame.mixer.music.set_volume(0.5)  # ajuste conforme necessário
+
+# Reproduzir música de fundo em um loop infinito
+pygame.mixer.music.play(-1)
+
 # Carregar o background
 background = pygame.image.load(os.path.join(assets_folder, "fundo.png")).convert()
 
