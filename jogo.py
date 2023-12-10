@@ -48,7 +48,13 @@ sprites = [(sem1, (200, 150)), (sem2, (100, 450)), (sem3, (500, 150)), (sem4, (4
 
 # Controle de tempo para gerar novos carros
 tempo_para_novo_carro = 5000
-tempo_acumulado = 0
+tempo_acumulado = pygame.time.get_ticks()  # Começar com o tempo atual
+
+# Contador inicial para mostrar na tela
+fonte_gta = pygame.font.Font("gta_font.ttf", 48)  # Substitua "gta_font.ttf" pelo caminho real da fonte GTA
+contador_texto = fonte_gta.render("5", True, (255, 255, 255))  # Contagem regressiva inicial
+contador_rect = contador_texto.get_rect(center=(350, 350))
+tempo_inicial = pygame.time.get_ticks()
 
 # Velocidade dos carros
 velocidade_carro = 0.5
@@ -88,8 +94,19 @@ while True:
     # Remover carros que saíram da tela
     sprites = [(sprite, pos) for (sprite, pos) in sprites if 0 <= pos[0] <= width and 0 <= pos[1] <= height]
 
+    # Atualizar o contador inicial
+    tempo_decorrido_total = (pygame.time.get_ticks() - tempo_inicial) // 1000  # Tempo decorrido em segundos
+    if tempo_decorrido_total < 5:  # Mostrar a contagem regressiva inicial
+        contador_texto = fonte_gta.render(f"{5 - tempo_decorrido_total}", True, (255, 255, 255))
+    else:
+        contador_texto = None  # Não renderizar o contador
+
     # Desenhar o background
     screen.blit(background, (0, 0))
+
+    # Desenhar o contador
+    if contador_texto:
+        screen.blit(contador_texto, contador_rect)
 
     # Desenhar os sprites
     for sprite, pos in sprites:
