@@ -60,7 +60,6 @@ carro4_inicial_pos = (0, 390)
 carros = [(carro, carro_inicial_pos), (carro2, carro2_inicial_pos), (carro3, carro3_inicial_pos), (carro4, carro4_inicial_pos)]
 
 # Retângulos de colisão para as faixas
-# Lembre-se: a contagem começa da faixa esquerda e roda em sentido horário
 faixa1_rect = pygame.Rect(230, 360, 2, 50)
 faixa2_rect = pygame.Rect(290, 265, 50, 2)
 faixa3_rect = pygame.Rect(470, 300, 2, 50)
@@ -81,6 +80,14 @@ velocidades = {carro: 1, carro2: 1, carro3: 1, carro4: 1}
 
 clock = pygame.time.Clock()
 
+# Lista de sprites dos semáforos e suas posições
+sprites = [
+    (sem1 if faixa1_visivel else sem_verd, (100, 450)),
+    (sem2 if faixa2_visivel else sem_verd, (200, 150)),
+    (sem3 if faixa3_visivel else sem_verd, (500, 150)),
+    (sem4 if faixa4_visivel else sem_verd, (400, 450))
+]
+
 # Loop principal
 while True:
     for event in pygame.event.get():
@@ -90,7 +97,7 @@ while True:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
             for sprite, pos in sprites:
-                if sprite in (sem_verd, sem_verm, sem1, sem2, sem3, sem4):  # Verificar se o clique esta em um semáforo
+                if sprite in (sem_verd, sem_verm, sem1, sem2, sem3, sem4):
                     sem_rect = pygame.Rect(pos, (novo_largura_sem, novo_altura_sem))
                     if sem_rect.collidepoint(x, y):
                         if pos == (100, 450):
@@ -101,39 +108,28 @@ while True:
                             faixa3_visivel = not faixa3_visivel
                         elif pos == (400, 450):
                             faixa4_visivel = not faixa4_visivel
-        # Lista de sprites dos semaforos e suas posições
-        # Lembre-se: a contagem começa da faixa esquerda e roda em sentido horário
-        sprites = [
-            (sem1 if faixa1_visivel else sem_verd, (100, 450)),
-            (sem2 if faixa2_visivel else sem_verd, (200, 150)),
-            (sem3 if faixa3_visivel else sem_verd, (500, 150)),
-            (sem4 if faixa4_visivel else sem_verd, (400, 450))
-        ]
-    if event.type == pygame.MOUSEBUTTONDOWN and game_over:
-        # Se o jogo estiver no estado Game Over e o usuário clicar, reinicie o jogo
-        game_over = False
-        tempo_acumulado = pygame.time.get_ticks()
 
     if not game_over:
+        tempo_passado = pygame.time.get_ticks()
+        tempo_decorrido = tempo_passado - tempo_acumulado
+
         # Atualizar a posição dos carros existentes
         for i, (sprite, pos) in enumerate(sprites):
-            if sprite in (carro, carro2, carro3, carro4):  # Verificar se é um carro
+            if sprite in (carro, carro2, carro3, carro4):
                 velocidade_carro = velocidades[sprite]
-                if sprite == carro or sprite == carro2:  # Movendo o carro para baixo ou para cima
+                if sprite == carro or sprite == carro2:
                     nova_posicao = (pos[0], pos[1] + velocidade_carro)
-                elif sprite == carro3:  # Movendo o carro para a esquerda
+                elif sprite == carro3:
                     nova_posicao = (pos[0] - velocidade_carro, pos[1])
-                elif sprite == carro4:  # Movendo o carro para a direita
+                elif sprite == carro4:
                     nova_posicao = (pos[0] + velocidade_carro, pos[1])
                 sprites[i] = (sprite, nova_posicao)
 
-                # Cria rect pra futura colisao
                 if sprite in (carro, carro2):
                     rect_carro = pygame.Rect(nova_posicao, (novo_largura_carro, novo_altura_carro))
-                else:  # sprite é carro3 ou carro4
+                else:
                     rect_carro = pygame.Rect(nova_posicao, (novo_altura_carro, novo_largura_carro))
 
-                # Verifique a colisão com as faixas
                 if faixa1_visivel and rect_carro.colliderect(faixa1_rect):
                     velocidades[sprite] = 0
                 elif faixa2_visivel and rect_carro.colliderect(faixa2_rect):
@@ -141,41 +137,31 @@ while True:
                 elif faixa3_visivel and rect_carro.colliderect(faixa3_rect):
                     velocidades[sprite] = 0
                 elif faixa4_visivel and rect_carro.colliderect(faixa4_rect):
-                    velocidades[sprite] = 0                
-                
-                # Verificar colisões
+                    velocidades[sprite] = 0
+
                 for j, (outro_sprite, outra_pos) in enumerate(sprites[i+1:], start=i+1):
                     if outro_sprite in (carro, carro2, carro3, carro4):
                         if outro_sprite in (carro, carro2):
                             rect_outro_carro = pygame.Rect(outra_pos, (novo_largura_carro, novo_altura_carro))
-                        else:  # outro_sprite é carro3 ou carro4
+                        else:
                             rect_outro_carro = pygame.Rect(outra_pos, (novo_altura_carro, novo_largura_carro))
                         if rect_carro.colliderect(rect_outro_carro):
                             game_over = True
                             break
 
         # Controle de tempo para gerar novos carros
-        tempo_passado = pygame.time.get_ticks()
-        tempo_decorrido = tempo_passado - tempo_acumulado
-
-        # Gerar um novo carro a cada segundo
         if tempo_decorrido > tempo_para_novo_carro:
-            # Selecionar um carro e sua posição inicial aleatoriamente
             novo_sprite, nova_posicao = random.choice(carros)
             sprites.append((novo_sprite, nova_posicao))
             tempo_acumulado = tempo_passado
 
-        # Remover carros que saíram da tela
         sprites = [(sprite, pos) for (sprite, pos) in sprites if 0 <= pos[0] <= width and 0 <= pos[1] <= height]
 
-        # Desenhar o background
         screen.blit(background, (0, 0))
 
-        # Desenhar os sprites
         for sprite, pos in sprites:
             screen.blit(sprite, pos)
 
-        # Desenhar as faixas
         if faixa1_visivel:
             pygame.draw.rect(screen, (0, 0, 255), faixa1_rect)
         if faixa2_visivel:
@@ -186,9 +172,8 @@ while True:
             pygame.draw.rect(screen, (0, 0, 255), faixa4_rect)
 
     else:
-        # Desenhar a imagem de Game Over
         screen.blit(game_over_image, game_over_rect)
 
     pygame.display.flip()
 
-    clock.tick(60)  # Limitar a taxa de quadros para 60 FPS
+    clock.tick(60)
