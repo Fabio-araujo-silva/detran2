@@ -33,7 +33,7 @@ carro4 = pygame.transform.rotate(carro, 90)
 
 # Redimensionar os sprites
 novo_largura_sem, novo_altura_sem = 100, 100
-novo_largura_carro, novo_altura_carro = 50, 93
+novo_largura_carro, novo_altura_carro = 50, 115
 sem1 = pygame.transform.scale(sem1, (novo_largura_sem, novo_altura_sem))
 sem2 = pygame.transform.scale(sem2, (novo_largura_sem, novo_altura_sem))
 sem3 = pygame.transform.scale(sem3, (novo_largura_sem, novo_altura_sem))
@@ -56,11 +56,11 @@ carros = [(carro, carro_inicial_pos), (carro2, carro2_inicial_pos), (carro3, car
 sprites = [(sem1, (200, 150)), (sem2, (100, 450)), (sem3, (500, 150)), (sem4, (400, 450))]
 
 # Controle de tempo para gerar novos carros
-tempo_para_novo_carro = 500
+tempo_para_novo_carro = 3000
 tempo_acumulado = 0
 
 # Velocidade dos carros
-velocidade_carro = 3
+velocidade_carro = 1
 
 # Carregar a imagem do Game Over
 game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
