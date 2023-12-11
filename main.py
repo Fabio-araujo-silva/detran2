@@ -26,9 +26,6 @@ contagem_regressiva = 3
 texto_contagem = gta_font.render(str(contagem_regressiva), True, (255, 255, 255))
 texto_contagem_rect = texto_contagem.get_rect(center=(width // 2, height // 2))
 
-# Carregar a imagem do Game Over
-game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
-game_over_rect = game_over_image.get_rect(center=(width // 2, height // 2))
 background = pygame.image.load(os.path.join(assets_folder, "fundo.png")).convert()
 
 # Música de fundo
@@ -107,7 +104,7 @@ while contagem_regressiva > 0:
     screen.blit(texto_contagem, texto_contagem_rect)
 
     pygame.display.flip()
-    pygame.time.delay(1000)  # Aguarde 1 segundo
+    pygame.time.delay(1000)
     contagem_regressiva -= 1
     texto_contagem = gta_font.render(str(contagem_regressiva) if contagem_regressiva > 0 else "F", True, (255, 255, 255))
     pygame.display.flip()
