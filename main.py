@@ -13,16 +13,12 @@ pygame.display.set_caption("GTA VI ALPHA PRE-BUILD 2.5.234")
 # Configurações de pasta de assets
 assets_folder = os.path.join(os.path.dirname(__file__), 'assets')
 
-# Carregar música de fundo
+#música de fundo
 pygame.mixer.music.load(os.path.join(assets_folder, 'musica.mp3'))
-
-# Definir o volume da música
-pygame.mixer.music.set_volume(0.5)  # ajuste conforme necessário
-
-# Reproduzir música de fundo em um loop infinito
+pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1)
 
-# Carregar o background
+#background
 background = pygame.image.load(os.path.join(assets_folder, "fundo.png")).convert()
 
 # Carregar os sprites
@@ -60,11 +56,11 @@ carros = [(carro, carro_inicial_pos), (carro2, carro2_inicial_pos), (carro3, car
 sprites = [(sem1, (200, 150)), (sem2, (100, 450)), (sem3, (500, 150)), (sem4, (400, 450))]
 
 # Controle de tempo para gerar novos carros
-tempo_para_novo_carro = 3000
+tempo_para_novo_carro = 500
 tempo_acumulado = 0
 
 # Velocidade dos carros
-velocidade_carro = 1
+velocidade_carro = 3
 
 # Carregar a imagem do Game Over
 game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.jpg")).convert_alpha()
@@ -73,8 +69,15 @@ game_over_rect = game_over_image.get_rect(center=(width // 2, height // 2))
 # Variável de controle do estado do jogo
 game_over = False
 
-# Loop principal
+# Cria rect pra futura colisao
+rect_carro = pygame.Rect(carro_inicial_pos, (novo_largura_carro, novo_altura_carro))
+rect_carro2 = pygame.Rect(carro2_inicial_pos, (novo_largura_carro, novo_altura_carro))
+rect_carro3 = pygame.Rect(carro3_inicial_pos, (novo_largura_carro, novo_altura_carro))
+rect_carro4 = pygame.Rect(carro4_inicial_pos, (novo_largura_carro, novo_altura_carro))
+
 clock = pygame.time.Clock()
+
+# Loop principal
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -106,30 +109,23 @@ while True:
             sprites.append((novo_sprite, nova_posicao))
             tempo_acumulado = tempo_passado
 
-        # Verificar colisão entre os carros
-        for i, (sprite1, pos1) in enumerate(sprites):
-            for j, (sprite2, pos2) in enumerate(sprites):
-                if i != j and sprite1 in (carro, carro2, carro3, carro4) and sprite2 in (carro, carro2, carro3, carro4):
-                    sprite1_rect = pygame.Rect(pos1, sprite1.get_size())
-                    sprite2_rect = pygame.Rect(pos2, sprite2.get_size())
-
-                    if sprite1_rect.colliderect(sprite2_rect):
-                        game_over = True
-
         # Remover carros que saíram da tela
         sprites = [(sprite, pos) for (sprite, pos) in sprites if 0 <= pos[0] <= width and 0 <= pos[1] <= height]
 
+        # Verificar colisões
+        if rect_carro.colliderect(rect_carro2) or rect_carro.colliderect(rect_carro3) or rect_carro.colliderect(rect_carro4) or rect_carro2.colliderect(rect_carro3) or rect_carro2.colliderect(rect_carro4) or rect_carro3.colliderect(rect_carro4):
+            game_over = True
 
-    # Desenhar o background
-    screen.blit(background, (0, 0))
+        # Desenhar o background
+        screen.blit(background, (0, 0))
 
-    if game_over:
-        # Se o jogo estiver no estado de Game Over, exibir a tela de Game Over
-        screen.blit(game_over_image, game_over_rect)
-    else:
-        # Se o jogo não estiver no estado de Game Over, desenhar os sprites
+        # Desenhar os sprites
         for sprite, pos in sprites:
             screen.blit(sprite, pos)
+
+    else:
+        # Desenhar a imagem de Game Over
+        screen.blit(game_over_image, game_over_rect)
 
     pygame.display.flip()
 
