@@ -41,8 +41,6 @@ sem1 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_al
 sem2 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
 sem3 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
 sem4 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
-sem_verm = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
-sem_verd = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
 carro = pygame.image.load(os.path.join(assets_folder, "carro.png")).convert_alpha()
 carro2 = pygame.transform.rotate(carro, 180)
 carro3 = pygame.transform.rotate(carro, -90)
@@ -55,8 +53,6 @@ sem1 = pygame.transform.scale(sem1, (novo_largura_sem, novo_altura_sem))
 sem2 = pygame.transform.scale(sem2, (novo_largura_sem, novo_altura_sem))
 sem3 = pygame.transform.scale(sem3, (novo_largura_sem, novo_altura_sem))
 sem4 = pygame.transform.scale(sem4, (novo_largura_sem, novo_altura_sem))
-sem_verm = pygame.transform.scale(sem_verm, (novo_largura_sem, novo_altura_sem))
-sem_verd = pygame.transform.scale(sem_verd, (novo_largura_sem, novo_altura_sem))
 carro = pygame.transform.scale(carro, (novo_largura_carro, novo_altura_carro))
 carro2 = pygame.transform.scale(carro2, (novo_largura_carro, novo_altura_carro))
 carro3 = pygame.transform.scale(carro3, (novo_altura_carro, novo_largura_carro))
@@ -94,10 +90,10 @@ clock = pygame.time.Clock()
 
 # Atualizar a lista de sprites com os semáforos atualizados
 sprites = [
-    (sem1 if faixa1_visivel else sem_verd, (100, 450)),
-    (sem2 if faixa2_visivel else sem_verd, (200, 150)),
-    (sem3 if faixa3_visivel else sem_verd, (500, 150)),
-    (sem4 if faixa4_visivel else sem_verd, (400, 450))
+    (sem1, (100, 450)),
+    (sem2, (200, 150)),
+    (sem3, (500, 150)),
+    (sem4, (400, 450))
     ]
 
 # Loop de contagem regressiva
@@ -126,7 +122,7 @@ while True:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
             for sprite, pos in sprites:
-                if sprite in (sem_verd, sem_verm, sem1, sem2, sem3, sem4):
+                if sprite in (sem1, sem2, sem3, sem4):
                     sem_rect = pygame.Rect(pos, (novo_largura_sem, novo_altura_sem))
                     if sem_rect.collidepoint(x, y):
                         if pos == (100, 450):
@@ -191,29 +187,9 @@ while True:
                             game_over = True
                             break
 
-        # Controle de tempo para gerar novos carros
-
-        def escolher_carro_aleatorio(carro_atual, carros_disponiveis):
-            opcoes_sem_carro_atual = [opcao for opcao in carros_disponiveis if opcao != carro_atual]
-            return random.choice(opcoes_sem_carro_atual)
-
-        if not carro_parado and tempo_decorrido > tempo_para_novo_carro:
-            novo_sprite, nova_posicao = escolher_carro_aleatorio((carro, carro_inicial_pos), carros)
-            sprites.append((novo_sprite, nova_posicao))
-            tempo_acumulado = tempo_passado
-
-        if not carro2_parado and tempo_decorrido > tempo_para_novo_carro:
-            novo_sprite, nova_posicao = escolher_carro_aleatorio((carro2, carro2_inicial_pos), carros)
-            sprites.append((novo_sprite, nova_posicao))
-            tempo_acumulado = tempo_passado
-
-        if not carro3_parado and tempo_decorrido > tempo_para_novo_carro:
-            novo_sprite, nova_posicao = escolher_carro_aleatorio((carro3, carro3_inicial_pos), carros)
-            sprites.append((novo_sprite, nova_posicao))
-            tempo_acumulado = tempo_passado
-
-        if not carro4_parado and tempo_decorrido > tempo_para_novo_carro:
-            novo_sprite, nova_posicao = escolher_carro_aleatorio((carro4, carro4_inicial_pos), carros)
+        # Controle de tempo para gerar novos carros  
+        if tempo_decorrido > tempo_para_novo_carro:
+            novo_sprite, nova_posicao = random.choice(carros)
             sprites.append((novo_sprite, nova_posicao))
             tempo_acumulado = tempo_passado
 
