@@ -33,6 +33,10 @@ carro2 = pygame.transform.rotate(carro, 180)
 carro3 = pygame.transform.rotate(carro, -90)
 carro4 = pygame.transform.rotate(carro, 90)
 
+# Carregar a imagem do Game Over
+game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
+game_over_rect = game_over_image.get_rect(center=(width // 2, height // 2))
+
 # Redimensionar os sprites
 novo_largura_sem, novo_altura_sem = 100, 100
 novo_largura_carro, novo_altura_carro = 50, 115
@@ -63,9 +67,10 @@ faixa3_visivel = False
 faixa4_visivel = False
 
 # Lista de sprites e suas posições
+# Lembre-se: a contagem começa da faixa esquerda e roda em sentido horário
 sprites = [
-    (sem1 if faixa3_visivel else sem_verm, (200, 150)),
-    (sem2 if faixa2_visivel else sem_verm, (100, 450)),
+    (sem1 if faixa3_visivel else sem_verm, (100, 450)),
+    (sem2 if faixa2_visivel else sem_verm, (200, 150)),
     (sem3 if faixa1_visivel else sem_verd, (500, 150)),
     (sem4 if faixa4_visivel else sem_verd, (400, 450))
 ]
@@ -82,10 +87,6 @@ faixa1_rect = pygame.Rect(230, 360, 2, 50)
 faixa2_rect = pygame.Rect(290, 265, 50, 2)
 faixa3_rect = pygame.Rect(470, 300, 2, 50)
 faixa4_rect = pygame.Rect(355, 474, 50, 2)
-
-# Carregar a imagem do Game Over
-game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
-game_over_rect = game_over_image.get_rect(center=(width // 2, height // 2))
 
 # Variável de controle do estado do jogo
 game_over = False
