@@ -53,10 +53,10 @@ carro3 = pygame.transform.scale(carro3, (novo_altura_carro, novo_largura_carro))
 carro4 = pygame.transform.scale(carro4, (novo_altura_carro, novo_largura_carro))
 
 # Posição inicial do carro
-carro_inicial_pos = (280, 0)
-carro2_inicial_pos = (360, 700)
+carro_inicial_pos = (0, 390)
+carro2_inicial_pos = (280, 0)
 carro3_inicial_pos = (700, 280)
-carro4_inicial_pos = (0, 390)
+carro4_inicial_pos = (360, 700)
 
 # Lista de carros e suas posições iniciais
 carros = [(carro, carro_inicial_pos), (carro2, carro2_inicial_pos), (carro3, carro3_inicial_pos), (carro4, carro4_inicial_pos)]
@@ -145,6 +145,8 @@ while True:
                     velocidades[sprite] = 0
                 elif faixa4_visivel and rect_carro.colliderect(faixa4_rect):
                     velocidades[sprite] = 0
+                else:
+                    velocidades[sprite] = 1
 
                 # Verificar colisões
                 for j, (outro_sprite, outra_pos) in enumerate(sprites[i+1:], start=i+1):
