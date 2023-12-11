@@ -69,6 +69,12 @@ game_over_rect = game_over_image.get_rect(center=(width // 2, height // 2))
 # Variável de controle do estado do jogo
 game_over = False
 
+# Variáveis para controlar a visibilidade das faixas
+faixa1_visivel = True
+faixa2_visivel = True
+faixa3_visivel = True
+faixa4_visivel = True
+
 clock = pygame.time.Clock()
 
 # Loop principal
@@ -77,21 +83,20 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-
-    if event.type == pygame.MOUSEBUTTONDOWN:
-        x, y = pygame.mouse.get_pos()
-        for sprite, pos in sprites:
-            if sprite in (sem1, sem2, sem3, sem4):  # Verificar se é um semáforo
-                sem_rect = pygame.Rect(pos, (novo_largura_sem, novo_altura_sem))
-                if sem_rect.collidepoint(x, y):
-                    # Aqui você pode adicionar o código para ativar ou desativar a faixa correspondente
-                    print(f'O semáforo em {pos} foi clicado!')
-
-    if event.type == pygame.MOUSEBUTTONDOWN and game_over:
-            # Se o jogo estiver no estado Game Over e o usuário clicar, reinicie o jogo
-            game_over = False
-            sprites = [(sem1, (200, 150)), (sem2, (100, 450)), (sem3, (500, 150)), (sem4, (400, 450))]
-            tempo_acumulado = pygame.time.get_ticks()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = pygame.mouse.get_pos()
+            for sprite, pos in sprites:
+                if sprite in (sem1, sem2, sem3, sem4):  # Verificar se é um semáforo
+                    sem_rect = pygame.Rect(pos, (novo_largura_sem, novo_altura_sem))
+                    if sem_rect.collidepoint(x, y):
+                        if pos == (400, 450):
+                            faixa1_visivel = not faixa1_visivel
+                        elif pos == (100, 450):
+                            faixa2_visivel = not faixa2_visivel
+                        elif pos == (200, 150):
+                            faixa3_visivel = not faixa3_visivel
+                        elif pos == (500, 150):
+                            faixa4_visivel = not faixa4_visivel
 
     if not game_over:
         # Atualizar a posição dos carros existentes
@@ -139,14 +144,15 @@ while True:
         for sprite, pos in sprites:
             screen.blit(sprite, pos)
 
-        # faixa1
-        pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(355, 474, 50, 2))
-        # faixa2
-        pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(230, 360, 2, 50))
-        # faixa3
-        pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(290, 265, 50, 2))
-        # faixa4
-        pygame.draw.rect(screen, (255, 0, 255), pygame.Rect(470, 300, 2, 50))
+        # Desenhar as faixas se estiverem visíveis
+        if faixa1_visivel:
+            pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(355, 474, 50, 2))
+        if faixa2_visivel:
+            pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(230, 360, 2, 50))
+        if faixa3_visivel:
+            pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(290, 265, 50, 2))
+        if faixa4_visivel:
+            pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(470, 300, 2, 50))
 
     else:
         # Desenhar a imagem de Game Over
