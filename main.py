@@ -110,7 +110,7 @@ while contagem_regressiva > 0:
     pygame.display.flip()
     pygame.time.delay(1000)  # Aguarde 1 segundo
     contagem_regressiva -= 1
-    texto_contagem = gta_font.render(str(contagem_regressiva) if contagem_regressiva > 0 else "F, clique para jogar novamente", True, (255, 255, 255))
+    texto_contagem = gta_font.render(str(contagem_regressiva) if contagem_regressiva > 0 else "F", True, (255, 255, 255))
     pygame.display.flip()
 
 
