@@ -108,6 +108,9 @@ while contagem_regressiva > 0:
     texto_contagem = gta_font.render(str(contagem_regressiva) if contagem_regressiva > 0 else "F", True, (255, 255, 255))
     pygame.display.flip()
 
+game_over = False
+texto_reiniciar = gta_font.render("Clique para reiniciar", True, (255, 255, 255))
+texto_reiniciar_rect = texto_reiniciar.get_rect(center=(width // 2, height // 2 + 50))
 
 #loop principal
 while True:
@@ -117,18 +120,21 @@ while True:
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
-            for sprite, pos in sprites:
-                if sprite in (sem1, sem2, sem3, sem4):
-                    sem_rect = pygame.Rect(pos, (novo_largura_sem, novo_altura_sem))
-                    if sem_rect.collidepoint(x, y):
-                        if pos == (100, 450):
-                            faixa1_visivel = not faixa1_visivel
-                        elif pos == (200, 150):
-                            faixa2_visivel = not faixa2_visivel
-                        elif pos == (500, 150):
-                            faixa3_visivel = not faixa3_visivel
-                        elif pos == (400, 450):
-                            faixa4_visivel = not faixa4_visivel    
+            if game_over and texto_reiniciar_rect.collidepoint(x, y):
+                game_over = False
+            else:
+                for sprite, pos in sprites:
+                    if sprite in (sem1, sem2, sem3, sem4):
+                        sem_rect = pygame.Rect(pos, (novo_largura_sem, novo_altura_sem))
+                        if sem_rect.collidepoint(x, y):
+                            if pos == (100, 450):
+                                faixa1_visivel = not faixa1_visivel
+                            elif pos == (200, 150):
+                                faixa2_visivel = not faixa2_visivel
+                            elif pos == (500, 150):
+                                faixa3_visivel = not faixa3_visivel
+                            elif pos == (400, 450):
+                                faixa4_visivel = not faixa4_visivel   
 
     if not game_over:
         tempo_passado = pygame.time.get_ticks()
@@ -146,7 +152,6 @@ while True:
                     nova_posicao = (pos[0] + velocidade_carro, pos[1])
                 sprites[i] = (sprite, nova_posicao)
 
-                
                 #colisao de carro com carro(atribuindo retangulo)
                 if sprite in (carro, carro2):
                     rect_carro = pygame.Rect(nova_posicao, (novo_largura_carro, novo_altura_carro))
@@ -210,6 +215,9 @@ while True:
 
     else:
         screen.blit(texto_contagem, texto_contagem_rect)
+        screen.blit(texto_reiniciar, texto_reiniciar_rect)
+    
+
 
     pygame.display.flip()
     clock.tick(60)
