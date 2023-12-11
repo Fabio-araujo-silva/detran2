@@ -5,13 +5,18 @@ import os
 
 pygame.init()
 
-# Configurações da tela
+# Configurações de pasta de assets
+assets_folder = os.path.join(os.path.dirname(__file__), 'assets')
+
+# Configurações iniciais
 width, height = 700, 700
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("GTA VI ALPHA PRE-BUILD 2.5.234")
+game_over = False
 
-# Configurações de pasta de assets
-assets_folder = os.path.join(os.path.dirname(__file__), 'assets')
+# Carregar a imagem do Game Over
+game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
+game_over_rect = game_over_image.get_rect(center=(width // 2, height // 2))
 
 # Música de fundo
 pygame.mixer.music.load(os.path.join(assets_folder, 'musica.mp3'))
@@ -32,10 +37,6 @@ carro = pygame.image.load(os.path.join(assets_folder, "carro.png")).convert_alph
 carro2 = pygame.transform.rotate(carro, 180)
 carro3 = pygame.transform.rotate(carro, -90)
 carro4 = pygame.transform.rotate(carro, 90)
-
-# Carregar a imagem do Game Over
-game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
-game_over_rect = game_over_image.get_rect(center=(width // 2, height // 2))
 
 # Redimensionar os sprites
 novo_largura_sem, novo_altura_sem = 100, 100
@@ -60,19 +61,26 @@ carro4_inicial_pos = (0, 390)
 # Lista de carros e suas posições iniciais
 carros = [(carro, carro_inicial_pos), (carro2, carro2_inicial_pos), (carro3, carro3_inicial_pos), (carro4, carro4_inicial_pos)]
 
+# Retângulos de colisão para as faixas
+# Lembre-se: a contagem começa da faixa esquerda e roda em sentido horário
+faixa1_rect = pygame.Rect(230, 360, 2, 50)
+faixa2_rect = pygame.Rect(290, 265, 50, 2)
+faixa3_rect = pygame.Rect(470, 300, 2, 50)
+faixa4_rect = pygame.Rect(355, 474, 50, 2)
+
 # Variáveis para controlar a visibilidade das faixas
 faixa1_visivel = False
 faixa2_visivel = False
 faixa3_visivel = False
 faixa4_visivel = False
 
-# Lista de sprites e suas posições
+# Lista de sprites dos semaforos e suas posições
 # Lembre-se: a contagem começa da faixa esquerda e roda em sentido horário
 sprites = [
-    (sem1 if faixa3_visivel else sem_verm, (100, 450)),
-    (sem2 if faixa2_visivel else sem_verm, (200, 150)),
-    (sem3 if faixa1_visivel else sem_verd, (500, 150)),
-    (sem4 if faixa4_visivel else sem_verd, (400, 450))
+    (sem_verm if faixa1_visivel else sem_verd, (100, 450)),
+    (sem_verm if faixa2_visivel else sem_verd, (200, 150)),
+    (sem_verm if faixa3_visivel else sem_verd, (500, 150)),
+    (sem_verm if faixa4_visivel else sem_verd, (400, 450))
 ]
 
 # Controle de tempo para gerar novos carros
@@ -81,21 +89,6 @@ tempo_acumulado = 0
 
 # Adicione uma velocidade para cada carro
 velocidades = {carro: 1, carro2: 1, carro3: 1, carro4: 1}
-
-# Retângulos de colisão para as faixas
-faixa1_rect = pygame.Rect(230, 360, 2, 50)
-faixa2_rect = pygame.Rect(290, 265, 50, 2)
-faixa3_rect = pygame.Rect(470, 300, 2, 50)
-faixa4_rect = pygame.Rect(355, 474, 50, 2)
-
-# Variável de controle do estado do jogo
-game_over = False
-
-# Variáveis para controlar a visibilidade das faixas
-faixa1_visivel = True
-faixa2_visivel = True
-faixa3_visivel = True
-faixa4_visivel = True
 
 clock = pygame.time.Clock()
 
