@@ -63,17 +63,11 @@ tempo_acumulado = 0
 velocidade_carro = 3
 
 # Carregar a imagem do Game Over
-game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.jpg")).convert_alpha()
+game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
 game_over_rect = game_over_image.get_rect(center=(width // 2, height // 2))
 
 # Variável de controle do estado do jogo
 game_over = False
-
-# Cria rect pra futura colisao
-rect_carro = pygame.Rect(carro_inicial_pos, (novo_largura_carro, novo_altura_carro))
-rect_carro2 = pygame.Rect(carro2_inicial_pos, (novo_largura_carro, novo_altura_carro))
-rect_carro3 = pygame.Rect(carro3_inicial_pos, (novo_largura_carro, novo_altura_carro))
-rect_carro4 = pygame.Rect(carro4_inicial_pos, (novo_largura_carro, novo_altura_carro))
 
 clock = pygame.time.Clock()
 
@@ -98,6 +92,17 @@ while True:
                     nova_posicao = (pos[0] + velocidade_carro, pos[1])
                 sprites[i] = (sprite, nova_posicao)
 
+                # Cria rect pra futura colisao
+                rect_carro = pygame.Rect(nova_posicao, (novo_largura_carro, novo_altura_carro))
+
+                # Verificar colisões
+                for j, (outro_sprite, outra_pos) in enumerate(sprites[i+1:], start=i+1):
+                    if outro_sprite in (carro, carro2, carro3, carro4):
+                        rect_outro_carro = pygame.Rect(outra_pos, (novo_largura_carro, novo_altura_carro))
+                        if rect_carro.colliderect(rect_outro_carro):
+                            game_over = True
+                            break
+
         # Controle de tempo para gerar novos carros
         tempo_passado = pygame.time.get_ticks()
         tempo_decorrido = tempo_passado - tempo_acumulado
@@ -111,10 +116,6 @@ while True:
 
         # Remover carros que saíram da tela
         sprites = [(sprite, pos) for (sprite, pos) in sprites if 0 <= pos[0] <= width and 0 <= pos[1] <= height]
-
-        # Verificar colisões
-        if rect_carro.colliderect(rect_carro2) or rect_carro.colliderect(rect_carro3) or rect_carro.colliderect(rect_carro4) or rect_carro2.colliderect(rect_carro3) or rect_carro2.colliderect(rect_carro4) or rect_carro3.colliderect(rect_carro4):
-            game_over = True
 
         # Desenhar o background
         screen.blit(background, (0, 0))
