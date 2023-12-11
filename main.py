@@ -113,17 +113,20 @@ while True:
     if not game_over:
         tempo_passado = pygame.time.get_ticks()
         tempo_decorrido = tempo_passado - tempo_acumulado
-
-        def colisao(entre_carros, carro_faixa, apagar_carro):
-            def entre_carros():
-                pass
-            def carro_faixa():
-                pass
-            def apagar_carro():
-                pass
-
-        # faz os carros andarem
+        
         for i, (sprite, pos) in enumerate(sprites):
+
+            def controle_carros(andar,colidir_faixa,colidir_carros):
+                def andar():
+                    pass
+                def colidir_faixa():
+                    pass
+                def colidir_carros():
+                    pass
+    
+    
+    
+            # faz os carros andarem
             if sprite in (carro, carro2, carro3, carro4):
                 velocidade_carro = velocidades[sprite]
                 if sprite == carro or sprite == carro2:
@@ -175,6 +178,7 @@ while True:
         for sprite, pos in sprites:
             screen.blit(sprite, pos)
 
+        #desenhando faixa na tela
         if faixa1_visivel:
             pygame.draw.rect(screen, (0, 0, 255), faixa1_rect)
         if faixa2_visivel:
