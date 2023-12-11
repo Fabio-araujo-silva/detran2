@@ -90,7 +90,6 @@ sprites = [
 
 # Loop principal
 while True:
-    #listener de eventos
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -113,20 +112,9 @@ while True:
     if not game_over:
         tempo_passado = pygame.time.get_ticks()
         tempo_decorrido = tempo_passado - tempo_acumulado
-        
-        for i, (sprite, pos) in enumerate(sprites):
 
-            def controle_carros(andar,colidir_faixa,colidir_carros):
-                def andar():
-                    pass
-                def colidir_faixa():
-                    pass
-                def colidir_carros():
-                    pass
-    
-    
-    
-            # faz os carros andarem
+        # Atualizar a posição dos carros existentes
+        for i, (sprite, pos) in enumerate(sprites):
             if sprite in (carro, carro2, carro3, carro4):
                 velocidade_carro = velocidades[sprite]
                 if sprite == carro or sprite == carro2:
@@ -137,13 +125,11 @@ while True:
                     nova_posicao = (pos[0] + velocidade_carro, pos[1])
                 sprites[i] = (sprite, nova_posicao)
 
-                #define retangulo de colisao
                 if sprite in (carro, carro2):
                     rect_carro = pygame.Rect(nova_posicao, (novo_largura_carro, novo_altura_carro))
                 else:
                     rect_carro = pygame.Rect(nova_posicao, (novo_altura_carro, novo_largura_carro))
 
-                #verificador de colisao carro/faixa
                 if faixa1_visivel and rect_carro.colliderect(faixa1_rect):
                     velocidades[sprite] = 0
                 elif faixa2_visivel and rect_carro.colliderect(faixa2_rect):
@@ -152,8 +138,9 @@ while True:
                     velocidades[sprite] = 0
                 elif faixa4_visivel and rect_carro.colliderect(faixa4_rect):
                     velocidades[sprite] = 0
+                else:
+                    velocidades[sprite] = 1
 
-                #verificador de colisao carro/carro
                 for j, (outro_sprite, outra_pos) in enumerate(sprites[i+1:], start=i+1):
                     if outro_sprite in (carro, carro2, carro3, carro4):
                         if outro_sprite in (carro, carro2):
@@ -170,7 +157,6 @@ while True:
             sprites.append((novo_sprite, nova_posicao))
             tempo_acumulado = tempo_passado
 
-        #limpa carro da tela no final
         sprites = [(sprite, pos) for (sprite, pos) in sprites if 0 <= pos[0] <= width and 0 <= pos[1] <= height]
 
         screen.blit(background, (0, 0))
@@ -178,7 +164,6 @@ while True:
         for sprite, pos in sprites:
             screen.blit(sprite, pos)
 
-        #desenhando faixa na tela
         if faixa1_visivel:
             pygame.draw.rect(screen, (0, 0, 255), faixa1_rect)
         if faixa2_visivel:
