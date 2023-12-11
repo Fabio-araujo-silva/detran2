@@ -27,10 +27,10 @@ pygame.mixer.music.play(-1)
 background = pygame.image.load(os.path.join(assets_folder, "fundo.png")).convert()
 
 # Carregar os sprites
-sem1 = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
-sem2 = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
-sem3 = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
-sem4 = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
+sem1 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
+sem2 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
+sem3 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
+sem4 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
 sem_verm = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
 sem_verd = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
 carro = pygame.image.load(os.path.join(assets_folder, "carro.png")).convert_alpha()
@@ -74,17 +74,10 @@ faixa2_visivel = False
 faixa3_visivel = False
 faixa4_visivel = False
 
-# Lista de sprites dos semaforos e suas posições
-# Lembre-se: a contagem começa da faixa esquerda e roda em sentido horário
-sprites = [
-    (sem_verm if faixa1_visivel else sem_verd, (100, 450)),
-    (sem_verm if faixa2_visivel else sem_verd, (200, 150)),
-    (sem_verm if faixa3_visivel else sem_verd, (500, 150)),
-    (sem_verm if faixa4_visivel else sem_verd, (400, 450))
-]
+
 
 # Controle de tempo para gerar novos carros
-tempo_para_novo_carro = 1000000000
+tempo_para_novo_carro = 5000
 tempo_acumulado = 0
 
 # Adicione uma velocidade para cada carro
@@ -101,26 +94,28 @@ while True:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
             for sprite, pos in sprites:
-                if sprite in (sem1, sem2, sem3, sem4):  # Verificar se é um semáforo
+                if sprite in (sem_verd, sem_verm, sem1, sem2, sem3, sem4):  # Verificar se o clique esta em um semáforo
                     sem_rect = pygame.Rect(pos, (novo_largura_sem, novo_altura_sem))
                     if sem_rect.collidepoint(x, y):
-                        if pos == (400, 450):
+                        if pos == (100, 450):
                             faixa1_visivel = not faixa1_visivel
-                        elif pos == (100, 450):
-                            faixa2_visivel = not faixa2_visivel
                         elif pos == (200, 150):
-                            faixa3_visivel = not faixa3_visivel
+                            faixa2_visivel = not faixa2_visivel
                         elif pos == (500, 150):
+                            faixa3_visivel = not faixa3_visivel
+                        elif pos == (400, 450):
                             faixa4_visivel = not faixa4_visivel
+        # Lista de sprites dos semaforos e suas posições
+        # Lembre-se: a contagem começa da faixa esquerda e roda em sentido horário
+        sprites = [
+            (sem1 if faixa1_visivel else sem_verd, (100, 450)),
+            (sem2 if faixa2_visivel else sem_verd, (200, 150)),
+            (sem3 if faixa3_visivel else sem_verd, (500, 150)),
+            (sem4 if faixa4_visivel else sem_verd, (400, 450))
+        ]
     if event.type == pygame.MOUSEBUTTONDOWN and game_over:
         # Se o jogo estiver no estado Game Over e o usuário clicar, reinicie o jogo
         game_over = False
-        sprites = [
-            (sem1 if faixa3_visivel else sem_verm, (200, 150)),
-            (sem2 if faixa2_visivel else sem_verm, (100, 450)),
-            (sem3 if faixa1_visivel else sem_verd, (500, 150)),
-            (sem4 if faixa4_visivel else sem_verd, (400, 450))
-        ]
         tempo_acumulado = pygame.time.get_ticks()
 
     if not game_over:
