@@ -13,23 +13,25 @@ pygame.display.set_caption("GTA VI ALPHA PRE-BUILD 2.5.234")
 # Configurações de pasta de assets
 assets_folder = os.path.join(os.path.dirname(__file__), 'assets')
 
-#música de fundo
+# Música de fundo
 pygame.mixer.music.load(os.path.join(assets_folder, 'musica.mp3'))
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1)
 
-#background
+# Background
 background = pygame.image.load(os.path.join(assets_folder, "fundo.png")).convert()
 
 # Carregar os sprites
-sem1 = pygame.image.load(os.path.join(assets_folder, "semaforo.png")).convert_alpha()
-sem2 = pygame.image.load(os.path.join(assets_folder, "semaforo.png")).convert_alpha()
-sem3 = pygame.image.load(os.path.join(assets_folder, "semaforo.png")).convert_alpha()
-sem4 = pygame.image.load(os.path.join(assets_folder, "semaforo.png")).convert_alpha()
+sem1 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
+sem2 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
+sem3 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
+sem4 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
 carro = pygame.image.load(os.path.join(assets_folder, "carro.png")).convert_alpha()
 carro2 = pygame.transform.rotate(carro, 180)
 carro3 = pygame.transform.rotate(carro, -90)
 carro4 = pygame.transform.rotate(carro, 90)
+sem_verm = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
+sem_verd = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
 
 # Redimensionar os sprites
 novo_largura_sem, novo_altura_sem = 100, 100
@@ -42,6 +44,8 @@ carro = pygame.transform.scale(carro, (novo_largura_carro, novo_altura_carro))
 carro2 = pygame.transform.scale(carro2, (novo_largura_carro, novo_altura_carro))
 carro3 = pygame.transform.scale(carro3, (novo_altura_carro, novo_largura_carro))
 carro4 = pygame.transform.scale(carro4, (novo_altura_carro, novo_largura_carro))
+sem_verm = pygame.transform.scale(sem_verm, (novo_largura_sem, novo_altura_sem))
+sem_verd = pygame.transform.scale(sem_verd, (novo_largura_sem, novo_altura_sem))
 
 # Posição inicial do carro
 carro_inicial_pos = (280, 0)
@@ -52,15 +56,34 @@ carro4_inicial_pos = (0, 390)
 # Lista de carros e suas posições iniciais
 carros = [(carro, carro_inicial_pos), (carro2, carro2_inicial_pos), (carro3, carro3_inicial_pos), (carro4, carro4_inicial_pos)]
 
+# Variáveis para controlar a visibilidade das faixas
+faixa1_visivel = True
+faixa2_visivel = True
+faixa3_visivel = True
+faixa4_visivel = True
+
 # Lista de sprites e suas posições
-sprites = [(sem1, (200, 150)), (sem2, (100, 450)), (sem3, (500, 150)), (sem4, (400, 450))]
+sprites = [
+    (sem1 if faixa3_visivel else sem_verm, (200, 150)),
+    (sem2 if faixa2_visivel else sem_verm, (100, 450)),
+    (sem3 if faixa1_visivel else sem_verd, (500, 150)),
+    (sem4 if faixa4_visivel else sem_verd, (400, 450))
+]
 
 # Controle de tempo para gerar novos carros
-tempo_para_novo_carro = 1000000000000000000000000000000000000000000
+tempo_para_novo_carro = 1000
 tempo_acumulado = 0
 
-# Velocidade dos carros
-velocidade_carro = 5
+# Adicione uma velocidade para cada carro
+velocidades = {carro: 1, carro2: 1, carro3: 1, carro4: 1}
+
+
+
+# Crie retângulos para as faixas
+faixa1_rect = pygame.Rect(355, 474, 50, 2)
+faixa2_rect = pygame.Rect(230, 360, 2, 50)
+faixa3_rect = pygame.Rect(290, 265, 50, 2)
+faixa4_rect = pygame.Rect(470, 300, 2, 50)
 
 # Carregar a imagem do Game Over
 game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
@@ -97,11 +120,22 @@ while True:
                             faixa3_visivel = not faixa3_visivel
                         elif pos == (500, 150):
                             faixa4_visivel = not faixa4_visivel
+    if event.type == pygame.MOUSEBUTTONDOWN and game_over:
+        # Se o jogo estiver no estado Game Over e o usuário clicar, reinicie o jogo
+        game_over = False
+        sprites = [
+            (sem1 if faixa3_visivel else sem_verm, (200, 150)),
+            (sem2 if faixa2_visivel else sem_verm, (100, 450)),
+            (sem3 if faixa1_visivel else sem_verd, (500, 150)),
+            (sem4 if faixa4_visivel else sem_verd, (400, 450))
+        ]
+        tempo_acumulado = pygame.time.get_ticks()
 
     if not game_over:
         # Atualizar a posição dos carros existentes
         for i, (sprite, pos) in enumerate(sprites):
             if sprite in (carro, carro2, carro3, carro4):  # Verificar se é um carro
+                velocidade_carro = velocidades[sprite]
                 if sprite == carro:  # Movendo o carro para baixo
                     nova_posicao = (pos[0], pos[1] + velocidade_carro)
                 elif sprite == carro2:  # Movendo o carro para cima
@@ -114,6 +148,16 @@ while True:
 
                 # Cria rect pra futura colisao
                 rect_carro = pygame.Rect(nova_posicao, (novo_largura_carro, novo_altura_carro))
+
+                # Verifique a colisão com as faixas
+                if faixa1_visivel and rect_carro.colliderect(faixa1_rect):
+                    velocidades[sprite] = 0
+                elif faixa2_visivel and rect_carro.colliderect(faixa2_rect):
+                    velocidades[sprite] = 0
+                elif faixa3_visivel and rect_carro.colliderect(faixa3_rect):
+                    velocidades[sprite] = 0
+                elif faixa4_visivel and rect_carro.colliderect(faixa4_rect):
+                    velocidades[sprite] = 0
 
                 # Verificar colisões
                 for j, (outro_sprite, outra_pos) in enumerate(sprites[i+1:], start=i+1):
@@ -146,13 +190,13 @@ while True:
 
         # Desenhar as faixas se estiverem visíveis
         if faixa1_visivel:
-            pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(355, 474, 50, 2))
+            pygame.draw.rect(screen, (0, 0, 255), faixa1_rect)
         if faixa2_visivel:
-            pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(230, 360, 2, 50))
+            pygame.draw.rect(screen, (0, 0, 255), faixa2_rect)
         if faixa3_visivel:
-            pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(290, 265, 50, 2))
+            pygame.draw.rect(screen, (0, 0, 255), faixa3_rect)
         if faixa4_visivel:
-            pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(470, 300, 2, 50))
+            pygame.draw.rect(screen, (0, 0, 255), faixa4_rect)
 
     else:
         # Desenhar a imagem de Game Over
