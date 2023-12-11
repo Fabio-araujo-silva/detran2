@@ -78,6 +78,12 @@ while True:
             pygame.quit()
             sys.exit()
 
+    if event.type == pygame.MOUSEBUTTONDOWN and game_over:
+            # Se o jogo estiver no estado Game Over e o usuário clicar, reinicie o jogo
+            game_over = False
+            sprites = [(sem1, (200, 150)), (sem2, (100, 450)), (sem3, (500, 150)), (sem4, (400, 450))]
+            tempo_acumulado = pygame.time.get_ticks()
+
     if not game_over:
         # Atualizar a posição dos carros existentes
         for i, (sprite, pos) in enumerate(sprites):
