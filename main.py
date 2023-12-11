@@ -56,11 +56,11 @@ carros = [(carro, carro_inicial_pos), (carro2, carro2_inicial_pos), (carro3, car
 sprites = [(sem1, (200, 150)), (sem2, (100, 450)), (sem3, (500, 150)), (sem4, (400, 450))]
 
 # Controle de tempo para gerar novos carros
-tempo_para_novo_carro = 3000
+tempo_para_novo_carro = 100000000000000000000000000000000
 tempo_acumulado = 0
 
 # Velocidade dos carros
-velocidade_carro = 1
+velocidade_carro = 0.01
 
 # Carregar a imagem do Game Over
 game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
@@ -129,6 +129,9 @@ while True:
         # Desenhar os sprites
         for sprite, pos in sprites:
             screen.blit(sprite, pos)
+
+        # faixa1
+        pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(355, 474, 50, 2))
 
     else:
         # Desenhar a imagem de Game Over
