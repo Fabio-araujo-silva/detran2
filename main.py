@@ -14,6 +14,15 @@ screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("GTA VI ALPHA PRE-BUILD 2.5.234")
 game_over = False
 
+# Carregar a fonte
+gta_font = pygame.font.Font(None, 36)
+
+# Variáveis de contagem regressiva
+contagem_regressiva = 3
+texto_contagem = gta_font.render(str(contagem_regressiva), True, (255, 255, 255))
+texto_contagem_rect = texto_contagem.get_rect(center=(width // 2, height // 2))
+
+
 # Carregar a imagem do Game Over
 game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
 game_over_rect = game_over_image.get_rect(center=(width // 2, height // 2))
@@ -72,7 +81,7 @@ faixa3_visivel = False
 faixa4_visivel = False
 
 # Controle de tempo para gerar novos carros
-tempo_para_novo_carro = 1000
+tempo_para_novo_carro = 1500
 tempo_acumulado = 0
 
 # Adicione uma velocidade para cada carro
@@ -80,13 +89,30 @@ velocidades = {carro: 1, carro2: 1, carro3: 1, carro4: 1}
 
 clock = pygame.time.Clock()
 
-# Lista de sprites dos semáforos e suas posições
+# Atualizar a lista de sprites com os semáforos atualizados
 sprites = [
     (sem1 if faixa1_visivel else sem_verd, (100, 450)),
     (sem2 if faixa2_visivel else sem_verd, (200, 150)),
     (sem3 if faixa3_visivel else sem_verd, (500, 150)),
     (sem4 if faixa4_visivel else sem_verd, (400, 450))
-]
+    ]
+
+# Loop de contagem regressiva
+while contagem_regressiva > 0:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    screen.blit(background, (0, 0))
+    screen.blit(texto_contagem, texto_contagem_rect)
+
+    pygame.display.flip()
+    pygame.time.delay(1000)  # Aguarde 1 segundo
+    contagem_regressiva -= 1
+    texto_contagem = gta_font.render(str(contagem_regressiva) if contagem_regressiva > 0 else "F, clique para jogar novamente", True, (255, 255, 255))
+    pygame.display.flip()
+
 
 # Loop principal
 while True:
@@ -107,7 +133,7 @@ while True:
                         elif pos == (500, 150):
                             faixa3_visivel = not faixa3_visivel
                         elif pos == (400, 450):
-                            faixa4_visivel = not faixa4_visivel
+                            faixa4_visivel = not faixa4_visivel    
 
     if not game_over:
         tempo_passado = pygame.time.get_ticks()
@@ -124,6 +150,8 @@ while True:
                 elif sprite == carro4:
                     nova_posicao = (pos[0] + velocidade_carro, pos[1])
                 sprites[i] = (sprite, nova_posicao)
+
+                
 
                 if sprite in (carro, carro2):
                     rect_carro = pygame.Rect(nova_posicao, (novo_largura_carro, novo_altura_carro))
@@ -174,12 +202,8 @@ while True:
             pygame.draw.rect(screen, (0, 0, 255), faixa4_rect)
 
     else:
-        screen.blit(game_over_image, game_over_rect)
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                game_over = False
-                tempo_acumulado = pygame.time.get_ticks()
+        # Exiba a imagem de game over durante esse tempo
+        screen.blit(texto_contagem, texto_contagem_rect)
 
     pygame.display.flip()
-
     clock.tick(60)
