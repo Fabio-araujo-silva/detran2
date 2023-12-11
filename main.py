@@ -13,6 +13,10 @@ width, height = 700, 700
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("GTA VI ALPHA PRE-BUILD 2.5.234")
 game_over = False
+carro_parado = False
+carro2_parado = False
+carro3_parado = False
+carro4_parado = False
 
 # Carregar a fonte
 gta_font = pygame.font.Font(None, 36)
@@ -21,7 +25,6 @@ gta_font = pygame.font.Font(None, 36)
 contagem_regressiva = 3
 texto_contagem = gta_font.render(str(contagem_regressiva), True, (255, 255, 255))
 texto_contagem_rect = texto_contagem.get_rect(center=(width // 2, height // 2))
-
 
 # Carregar a imagem do Game Over
 game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
@@ -159,16 +162,25 @@ while True:
                     rect_carro = pygame.Rect(nova_posicao, (novo_altura_carro, novo_largura_carro))
 
                 if faixa1_visivel and rect_carro.colliderect(faixa1_rect):
+                    if velocidades[sprite] == 0:
+                        carro4_parado = True
                     velocidades[sprite] = 0
                 elif faixa2_visivel and rect_carro.colliderect(faixa2_rect):
+                    if velocidades[sprite] == 0:
+                        carro_parado = True
                     velocidades[sprite] = 0
                 elif faixa3_visivel and rect_carro.colliderect(faixa3_rect):
+                    if velocidades[sprite] == 0:
+                        carro3_parado = True
                     velocidades[sprite] = 0
                 elif faixa4_visivel and rect_carro.colliderect(faixa4_rect):
+                    if velocidades[sprite] == 0:
+                        carro2_parado = True
                     velocidades[sprite] = 0
                 else:
                     velocidades[sprite] = 1
 
+                
                 for j, (outro_sprite, outra_pos) in enumerate(sprites[i+1:], start=i+1):
                     if outro_sprite in (carro, carro2, carro3, carro4):
                         if outro_sprite in (carro, carro2):
@@ -180,10 +192,31 @@ while True:
                             break
 
         # Controle de tempo para gerar novos carros
-        if tempo_decorrido > tempo_para_novo_carro:
-            novo_sprite, nova_posicao = random.choice(carros)
+
+        def escolher_carro_aleatorio(carro_atual, carros_disponiveis):
+            opcoes_sem_carro_atual = [opcao for opcao in carros_disponiveis if opcao != carro_atual]
+            return random.choice(opcoes_sem_carro_atual)
+
+        if not carro_parado and tempo_decorrido > tempo_para_novo_carro:
+            novo_sprite, nova_posicao = escolher_carro_aleatorio((carro, carro_inicial_pos), carros)
             sprites.append((novo_sprite, nova_posicao))
             tempo_acumulado = tempo_passado
+
+        if not carro2_parado and tempo_decorrido > tempo_para_novo_carro:
+            novo_sprite, nova_posicao = escolher_carro_aleatorio((carro2, carro2_inicial_pos), carros)
+            sprites.append((novo_sprite, nova_posicao))
+            tempo_acumulado = tempo_passado
+
+        if not carro3_parado and tempo_decorrido > tempo_para_novo_carro:
+            novo_sprite, nova_posicao = escolher_carro_aleatorio((carro3, carro3_inicial_pos), carros)
+            sprites.append((novo_sprite, nova_posicao))
+            tempo_acumulado = tempo_passado
+
+        if not carro4_parado and tempo_decorrido > tempo_para_novo_carro:
+            novo_sprite, nova_posicao = escolher_carro_aleatorio((carro4, carro4_inicial_pos), carros)
+            sprites.append((novo_sprite, nova_posicao))
+            tempo_acumulado = tempo_passado
+
 
         sprites = [(sprite, pos) for (sprite, pos) in sprites if 0 <= pos[0] <= width and 0 <= pos[1] <= height]
 
