@@ -121,10 +121,8 @@ while True:
         for i, (sprite, pos) in enumerate(sprites):
             if sprite in (carro, carro2, carro3, carro4):  # Verificar se é um carro
                 velocidade_carro = velocidades[sprite]
-                if sprite == carro:  # Movendo o carro para baixo
+                if sprite == carro or sprite == carro2:  # Movendo o carro para baixo ou para cima
                     nova_posicao = (pos[0], pos[1] + velocidade_carro)
-                elif sprite == carro2:  # Movendo o carro para cima
-                    nova_posicao = (pos[0], pos[1] - velocidade_carro)
                 elif sprite == carro3:  # Movendo o carro para a esquerda
                     nova_posicao = (pos[0] - velocidade_carro, pos[1])
                 elif sprite == carro4:  # Movendo o carro para a direita
@@ -132,7 +130,10 @@ while True:
                 sprites[i] = (sprite, nova_posicao)
 
                 # Cria rect pra futura colisao
-                rect_carro = pygame.Rect(nova_posicao, (novo_largura_carro, novo_altura_carro))
+                if sprite in (carro, carro2):
+                    rect_carro = pygame.Rect(nova_posicao, (novo_largura_carro, novo_altura_carro))
+                else:  # sprite é carro3 ou carro4
+                    rect_carro = pygame.Rect(nova_posicao, (novo_altura_carro, novo_largura_carro))
 
                 # Verifique a colisão com as faixas
                 if faixa1_visivel and rect_carro.colliderect(faixa1_rect):
@@ -147,7 +148,10 @@ while True:
                 # Verificar colisões
                 for j, (outro_sprite, outra_pos) in enumerate(sprites[i+1:], start=i+1):
                     if outro_sprite in (carro, carro2, carro3, carro4):
-                        rect_outro_carro = pygame.Rect(outra_pos, (novo_largura_carro, novo_altura_carro))
+                        if outro_sprite in (carro, carro2):
+                            rect_outro_carro = pygame.Rect(outra_pos, (novo_largura_carro, novo_altura_carro))
+                        else:  # outro_sprite é carro3 ou carro4
+                            rect_outro_carro = pygame.Rect(outra_pos, (novo_altura_carro, novo_largura_carro))
                         if rect_carro.colliderect(rect_outro_carro):
                             game_over = True
                             break
