@@ -17,14 +17,12 @@ game_over = False
 # Carregar a imagem do Game Over
 game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
 game_over_rect = game_over_image.get_rect(center=(width // 2, height // 2))
+background = pygame.image.load(os.path.join(assets_folder, "fundo.png")).convert()
 
 # Música de fundo
 pygame.mixer.music.load(os.path.join(assets_folder, 'musica.mp3'))
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1)
-
-# Background
-background = pygame.image.load(os.path.join(assets_folder, "fundo.png")).convert()
 
 # Carregar os sprites
 sem1 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
