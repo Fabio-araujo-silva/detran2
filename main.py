@@ -22,16 +22,16 @@ pygame.mixer.music.play(-1)
 background = pygame.image.load(os.path.join(assets_folder, "fundo.png")).convert()
 
 # Carregar os sprites
-sem1 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
-sem2 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
-sem3 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
-sem4 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
+sem1 = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
+sem2 = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
+sem3 = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
+sem4 = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
+sem_verm = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
+sem_verd = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
 carro = pygame.image.load(os.path.join(assets_folder, "carro.png")).convert_alpha()
 carro2 = pygame.transform.rotate(carro, 180)
 carro3 = pygame.transform.rotate(carro, -90)
 carro4 = pygame.transform.rotate(carro, 90)
-sem_verm = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
-sem_verd = pygame.image.load(os.path.join(assets_folder, "sem_verd.png")).convert_alpha()
 
 # Redimensionar os sprites
 novo_largura_sem, novo_altura_sem = 100, 100
@@ -40,12 +40,12 @@ sem1 = pygame.transform.scale(sem1, (novo_largura_sem, novo_altura_sem))
 sem2 = pygame.transform.scale(sem2, (novo_largura_sem, novo_altura_sem))
 sem3 = pygame.transform.scale(sem3, (novo_largura_sem, novo_altura_sem))
 sem4 = pygame.transform.scale(sem4, (novo_largura_sem, novo_altura_sem))
+sem_verm = pygame.transform.scale(sem_verm, (novo_largura_sem, novo_altura_sem))
+sem_verd = pygame.transform.scale(sem_verd, (novo_largura_sem, novo_altura_sem))
 carro = pygame.transform.scale(carro, (novo_largura_carro, novo_altura_carro))
 carro2 = pygame.transform.scale(carro2, (novo_largura_carro, novo_altura_carro))
 carro3 = pygame.transform.scale(carro3, (novo_altura_carro, novo_largura_carro))
 carro4 = pygame.transform.scale(carro4, (novo_altura_carro, novo_largura_carro))
-sem_verm = pygame.transform.scale(sem_verm, (novo_largura_sem, novo_altura_sem))
-sem_verd = pygame.transform.scale(sem_verd, (novo_largura_sem, novo_altura_sem))
 
 # Posição inicial do carro
 carro_inicial_pos = (280, 0)
@@ -57,10 +57,10 @@ carro4_inicial_pos = (0, 390)
 carros = [(carro, carro_inicial_pos), (carro2, carro2_inicial_pos), (carro3, carro3_inicial_pos), (carro4, carro4_inicial_pos)]
 
 # Variáveis para controlar a visibilidade das faixas
-faixa1_visivel = True
-faixa2_visivel = True
-faixa3_visivel = True
-faixa4_visivel = True
+faixa1_visivel = False
+faixa2_visivel = False
+faixa3_visivel = False
+faixa4_visivel = False
 
 # Lista de sprites e suas posições
 sprites = [
@@ -71,19 +71,17 @@ sprites = [
 ]
 
 # Controle de tempo para gerar novos carros
-tempo_para_novo_carro = 1000
+tempo_para_novo_carro = 1000000000
 tempo_acumulado = 0
 
 # Adicione uma velocidade para cada carro
 velocidades = {carro: 1, carro2: 1, carro3: 1, carro4: 1}
 
-
-
-# Crie retângulos para as faixas
-faixa1_rect = pygame.Rect(355, 474, 50, 2)
-faixa2_rect = pygame.Rect(230, 360, 2, 50)
-faixa3_rect = pygame.Rect(290, 265, 50, 2)
-faixa4_rect = pygame.Rect(470, 300, 2, 50)
+# Retângulos de colisão para as faixas
+faixa1_rect = pygame.Rect(230, 360, 2, 50)
+faixa2_rect = pygame.Rect(290, 265, 50, 2)
+faixa3_rect = pygame.Rect(470, 300, 2, 50)
+faixa4_rect = pygame.Rect(355, 474, 50, 2)
 
 # Carregar a imagem do Game Over
 game_over_image = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert_alpha()
