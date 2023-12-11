@@ -78,6 +78,15 @@ while True:
             pygame.quit()
             sys.exit()
 
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        x, y = pygame.mouse.get_pos()
+        for sprite, pos in sprites:
+            if sprite in (sem1, sem2, sem3, sem4):  # Verificar se é um semáforo
+                sem_rect = pygame.Rect(pos, (novo_largura_sem, novo_altura_sem))
+                if sem_rect.collidepoint(x, y):
+                    # Aqui você pode adicionar o código para ativar ou desativar a faixa correspondente
+                    print(f'O semáforo em {pos} foi clicado!')
+
     if event.type == pygame.MOUSEBUTTONDOWN and game_over:
             # Se o jogo estiver no estado Game Over e o usuário clicar, reinicie o jogo
             game_over = False
@@ -137,7 +146,7 @@ while True:
         # faixa3
         pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(290, 265, 50, 2))
         # faixa4
-        pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(470, 300, 2, 50))
+        pygame.draw.rect(screen, (255, 0, 255), pygame.Rect(470, 300, 2, 50))
 
     else:
         # Desenhar a imagem de Game Over
