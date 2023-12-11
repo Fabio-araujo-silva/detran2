@@ -38,7 +38,7 @@ carro4 = pygame.transform.rotate(carro, 90)
 
 # Redimensionar os sprites
 novo_largura_sem, novo_altura_sem = 100, 100
-novo_largura_carro, novo_altura_carro = 50, 115
+novo_largura_carro, novo_altura_carro = 25, 56
 sem1 = pygame.transform.scale(sem1, (novo_largura_sem, novo_altura_sem))
 sem2 = pygame.transform.scale(sem2, (novo_largura_sem, novo_altura_sem))
 sem3 = pygame.transform.scale(sem3, (novo_largura_sem, novo_altura_sem))
@@ -72,7 +72,7 @@ faixa3_visivel = False
 faixa4_visivel = False
 
 # Controle de tempo para gerar novos carros
-tempo_para_novo_carro = 2000
+tempo_para_novo_carro = 1000
 tempo_acumulado = 0
 
 # Adicione uma velocidade para cada carro
@@ -173,6 +173,10 @@ while True:
 
     else:
         screen.blit(game_over_image, game_over_rect)
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                game_over = False
+                tempo_acumulado = pygame.time.get_ticks()
 
     pygame.display.flip()
 
