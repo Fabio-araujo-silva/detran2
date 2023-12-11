@@ -75,7 +75,7 @@ faixa3_visivel = False
 faixa4_visivel = False
 
 # Controle de tempo para gerar novos carros
-tempo_para_novo_carro = 5000
+tempo_para_novo_carro = 2000
 tempo_acumulado = 0
 
 # Adicione uma velocidade para cada carro
@@ -143,8 +143,8 @@ while True:
                 elif faixa3_visivel and rect_carro.colliderect(faixa3_rect):
                     velocidades[sprite] = 0
                 elif faixa4_visivel and rect_carro.colliderect(faixa4_rect):
-                    velocidades[sprite] = 0
-
+                    velocidades[sprite] = 0                
+                
                 # Verificar colisões
                 for j, (outro_sprite, outra_pos) in enumerate(sprites[i+1:], start=i+1):
                     if outro_sprite in (carro, carro2, carro3, carro4):
@@ -177,7 +177,7 @@ while True:
         for sprite, pos in sprites:
             screen.blit(sprite, pos)
 
-        # Desenhar as faixas se estiverem visíveis
+        # Desenhar as faixas
         if faixa1_visivel:
             pygame.draw.rect(screen, (0, 0, 255), faixa1_rect)
         if faixa2_visivel:
