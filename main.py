@@ -5,10 +5,10 @@ import os
 
 pygame.init()
 
-# Configurações de pasta de assets
+#pasta de assets
 assets_folder = os.path.join(os.path.dirname(__file__), 'assets')
 
-# Configurações iniciais
+#config iniciais
 width, height = 700, 700
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("GTA VI ALPHA PRE-BUILD 2.5.234")
@@ -18,22 +18,22 @@ carro2_parado = False
 carro3_parado = False
 carro4_parado = False
 
-# Carregar a fonte
+#fonte
 gta_font = pygame.font.Font(None, 36)
 
-# Variáveis de contagem regressiva
+#contagem regressiva
 contagem_regressiva = 3
 texto_contagem = gta_font.render(str(contagem_regressiva), True, (255, 255, 255))
 texto_contagem_rect = texto_contagem.get_rect(center=(width // 2, height // 2))
 
 background = pygame.image.load(os.path.join(assets_folder, "fundo.png")).convert()
 
-# Música de fundo
+#mus1ca de fundo
 pygame.mixer.music.load(os.path.join(assets_folder, 'musica.mp3'))
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1)
 
-# Carregar os sprites
+#carregar os sprites
 sem1 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
 sem2 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
 sem3 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
@@ -43,7 +43,7 @@ carro2 = pygame.transform.rotate(carro, 180)
 carro3 = pygame.transform.rotate(carro, -90)
 carro4 = pygame.transform.rotate(carro, 90)
 
-# Redimensionar os sprites
+#redimensionar os sprites
 novo_largura_sem, novo_altura_sem = 100, 100
 novo_largura_carro, novo_altura_carro = 25, 56
 sem1 = pygame.transform.scale(sem1, (novo_largura_sem, novo_altura_sem))
@@ -55,37 +55,36 @@ carro2 = pygame.transform.scale(carro2, (novo_largura_carro, novo_altura_carro))
 carro3 = pygame.transform.scale(carro3, (novo_altura_carro, novo_largura_carro))
 carro4 = pygame.transform.scale(carro4, (novo_altura_carro, novo_largura_carro))
 
-# Posição inicial do carro
+#posição inicial do carro
 carro_inicial_pos = (280, 0)
 carro2_inicial_pos = (360, 700)
 carro3_inicial_pos = (700, 280)
 carro4_inicial_pos = (0, 390)
 
-# Lista de carros e suas posições iniciais
+#lista de carros e suas posições iniciais
 carros = [(carro, carro_inicial_pos), (carro2, carro2_inicial_pos), (carro3, carro3_inicial_pos), (carro4, carro4_inicial_pos)]
 
-# Retângulos de colisão para as faixas
+#retângulos de colisão para as faixas
 faixa1_rect = pygame.Rect(230, 360, 2, 50)
 faixa2_rect = pygame.Rect(290, 265, 50, 2)
 faixa3_rect = pygame.Rect(470, 300, 2, 50)
 faixa4_rect = pygame.Rect(355, 474, 50, 2)
 
-# Variáveis para controlar a visibilidade das faixas
+#se a faixa esta visivel
 faixa1_visivel = False
 faixa2_visivel = False
 faixa3_visivel = False
 faixa4_visivel = False
 
-# Controle de tempo para gerar novos carros
+#controle de tempo
 tempo_para_novo_carro = 1500
 tempo_acumulado = 0
 
-# Adicione uma velocidade para cada carro
+#velocidade dos carros
 velocidades = {carro: 1, carro2: 1, carro3: 1, carro4: 1}
-
 clock = pygame.time.Clock()
 
-# Atualizar a lista de sprites com os semáforos atualizados
+#lista de sprites com os semaforos
 sprites = [
     (sem1, (100, 450)),
     (sem2, (200, 150)),
@@ -93,7 +92,7 @@ sprites = [
     (sem4, (400, 450))
     ]
 
-# Loop de contagem regressiva
+#contagem regressiva
 while contagem_regressiva > 0:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -110,7 +109,7 @@ while contagem_regressiva > 0:
     pygame.display.flip()
 
 
-# Loop principal
+#loop principal
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -135,7 +134,7 @@ while True:
         tempo_passado = pygame.time.get_ticks()
         tempo_decorrido = tempo_passado - tempo_acumulado
 
-        # Atualizar a posição dos carros existentes
+        #anda com o carro
         for i, (sprite, pos) in enumerate(sprites):
             if sprite in (carro, carro2, carro3, carro4):
                 velocidade_carro = velocidades[sprite]
@@ -148,12 +147,13 @@ while True:
                 sprites[i] = (sprite, nova_posicao)
 
                 
-
+                #colisao de carro com carro(atribuindo retangulo)
                 if sprite in (carro, carro2):
                     rect_carro = pygame.Rect(nova_posicao, (novo_largura_carro, novo_altura_carro))
                 else:
                     rect_carro = pygame.Rect(nova_posicao, (novo_altura_carro, novo_largura_carro))
 
+                #colisao carro com faixa
                 if faixa1_visivel and rect_carro.colliderect(faixa1_rect):
                     if velocidades[sprite] == 0:
                         carro4_parado = True
@@ -173,7 +173,7 @@ while True:
                 else:
                     velocidades[sprite] = 1
 
-                
+                #colisao de carro com carro(verificando colisao)
                 for j, (outro_sprite, outra_pos) in enumerate(sprites[i+1:], start=i+1):
                     if outro_sprite in (carro, carro2, carro3, carro4):
                         if outro_sprite in (carro, carro2):
@@ -184,7 +184,7 @@ while True:
                             game_over = True
                             break
 
-        # Controle de tempo para gerar novos carros  
+        #geração aleatoria de carros 
         if tempo_decorrido > tempo_para_novo_carro:
             novo_sprite, nova_posicao = random.choice(carros)
             sprites.append((novo_sprite, nova_posicao))
@@ -198,17 +198,17 @@ while True:
         for sprite, pos in sprites:
             screen.blit(sprite, pos)
 
+        #desenha as faixas
         if faixa1_visivel:
-            pygame.draw.rect(screen, (0, 0, 255), faixa1_rect)
+            pygame.draw.rect(screen, (255, 0, 0), faixa1_rect)
         if faixa2_visivel:
-            pygame.draw.rect(screen, (0, 0, 255), faixa2_rect)
+            pygame.draw.rect(screen, (255, 0, 0), faixa2_rect)
         if faixa3_visivel:
-            pygame.draw.rect(screen, (0, 0, 255), faixa3_rect)
+            pygame.draw.rect(screen, (255, 0, 0), faixa3_rect)
         if faixa4_visivel:
-            pygame.draw.rect(screen, (0, 0, 255), faixa4_rect)
+            pygame.draw.rect(screen, (255, 0, 0), faixa4_rect)
 
     else:
-        # Exiba a imagem de game over durante esse tempo
         screen.blit(texto_contagem, texto_contagem_rect)
 
     pygame.display.flip()
