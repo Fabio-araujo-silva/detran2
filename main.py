@@ -1,38 +1,35 @@
 import pygame
 import random
 import os
+import sys  # Importando sys para usar sys.exit()
 
 pygame.init()
 
-#pasta de assets
+# Pasta de assets
 assets_folder = os.path.join(os.path.dirname(__file__), 'assets')
 
-#config iniciais
+# Configurações iniciais
 width, height = 700, 700
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("GTA VI ALPHA PRE-BUILD 2.5.234")
 game_over = False
-carro_parado = False
-carro2_parado = False
-carro3_parado = False
-carro4_parado = False
 
-#fonte
+# Fonte
 gta_font = pygame.font.Font(None, 36)
 
-#contagem regressiva
+# Contagem regressiva
 contagem_regressiva = 3
 texto_contagem = gta_font.render(str(contagem_regressiva), True, (255, 255, 255))
 texto_contagem_rect = texto_contagem.get_rect(center=(width // 2, height // 2))
 
 background = pygame.image.load(os.path.join(assets_folder, "fundo.png")).convert()
 
-#mus1ca de fundo
+# Música de fundo
 pygame.mixer.music.load(os.path.join(assets_folder, 'musica.mp3'))
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1)
 
-#carregar os sprites
+# Carregar os sprites
 sem1 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
 sem2 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
 sem3 = pygame.image.load(os.path.join(assets_folder, "sem_verm.png")).convert_alpha()
@@ -91,6 +88,11 @@ sprites = [
     (sem4, (400, 450))
     ]
 
+game_over_img = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert()
+game_over_rect = game_over_img.get_rect(center=(width // 2, height // 2))
+
+
+
 #contagem regressiva
 while contagem_regressiva > 0:
     for event in pygame.event.get():
@@ -111,7 +113,7 @@ game_over = False
 texto_reiniciar = gta_font.render("Clique para reiniciar", True, (255, 255, 255))
 texto_reiniciar_rect = texto_reiniciar.get_rect(center=(width // 2, height // 2 + 50))
 
-#loop principal
+# Loop principal
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -119,13 +121,14 @@ while True:
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
-            if game_over and texto_reiniciar_rect.collidepoint(x, y):
+            game_over_rect = pygame.Rect(0,0, 700, 700)
+            if game_over and game_over_rect.collidepoint(x, y):
                 game_over = False
-                break
             else:
                 for sprite, pos in sprites:
                     if sprite in (sem1, sem2, sem3, sem4):
                         sem_rect = pygame.Rect(pos, (novo_largura_sem, novo_altura_sem))
+                        game_over = False
                         if sem_rect.collidepoint(x, y):
                             if pos == (100, 450):
                                 faixa1_visivel = not faixa1_visivel
@@ -214,8 +217,8 @@ while True:
             pygame.draw.rect(screen, (255, 0, 0), faixa4_rect)
 
     else:
-        screen.blit(texto_contagem, texto_contagem_rect)
-        screen.blit(texto_reiniciar, texto_reiniciar_rect)
+        sprites = [s for s in sprites if s[0] not in (carro, carro2, carro3, carro4)]
+        screen.blit(game_over_img, game_over_rect)
     
 
 
