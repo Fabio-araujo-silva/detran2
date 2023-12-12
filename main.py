@@ -99,6 +99,7 @@ estado_jogo = "menu"
 game_over = False
 texto_reiniciar = gta_font.render("Clique para reiniciar", True, (255, 255, 255))
 texto_reiniciar_rect = texto_reiniciar.get_rect(center=(width // 2, height // 2 + 50))
+parado = {carro: False, carro2: False, carro3: False, carro4: False}
 
 # Loop principal
 while True:
@@ -171,25 +172,27 @@ while True:
                     else:
                         rect_carro = pygame.Rect(nova_posicao, (novo_altura_carro, novo_largura_carro))
 
+                    parado = {carro: False, carro2: False, carro3: False, carro4: False}
                     # colisao carro com faixa
                     if faixa1_visivel and rect_carro.colliderect(faixa1_rect):
-                        if velocidades[sprite] == 0:
-                            carro4_parado = True
-                        velocidades[sprite] = 0
+                        parado[sprite] = True
                     elif faixa2_visivel and rect_carro.colliderect(faixa2_rect):
-                        if velocidades[sprite] == 0:
-                            carro_parado = True
-                        velocidades[sprite] = 0
+                        parado[sprite] = True
                     elif faixa3_visivel and rect_carro.colliderect(faixa3_rect):
-                        if velocidades[sprite] == 0:
-                            carro3_parado = True
-                        velocidades[sprite] = 0
+                        parado[sprite] = True
                     elif faixa4_visivel and rect_carro.colliderect(faixa4_rect):
-                        if velocidades[sprite] == 0:
-                            carro2_parado = True
-                        velocidades[sprite] = 0
-                    else:
+                        parado[sprite] = True
+                    if not faixa1_visivel and not parado[sprite]:
+                        velocidades[sprite] = 1   
+                    if not faixa2_visivel and not parado[sprite]:
                         velocidades[sprite] = 1
+                    if not faixa3_visivel and not parado[sprite]:
+                        velocidades[sprite] = 1
+                    if not faixa4_visivel and not parado[sprite]:
+                        velocidades[sprite] = 1    
+
+                    if not parado[sprite]:
+                        sprites[i] = (sprite, nova_posicao)                    
 
                     #colisao de carro com carro(verificando colisao)
                     for j, (outro_sprite, outra_pos) in enumerate(sprites[i+1:], start=i+1):
