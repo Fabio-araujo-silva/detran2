@@ -122,6 +122,7 @@ while True:
             x, y = pygame.mouse.get_pos()
             if game_over and texto_reiniciar_rect.collidepoint(x, y):
                 game_over = False
+                break
             else:
                 for sprite, pos in sprites:
                     if sprite in (sem1, sem2, sem3, sem4):
