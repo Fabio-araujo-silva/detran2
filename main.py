@@ -109,17 +109,15 @@ while True:
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
-            game_over_rect = pygame.Rect(0,0, 700, 700)
             if estado_jogo == "menu" and menu_rect.collidepoint(x, y):
                 estado_jogo = "jogando"
                 contagem_regressiva = 3
-            if game_over and game_over_rect.collidepoint(x, y):
+            elif game_over and game_over_rect.collidepoint(x, y):
                 game_over = False
             else:
                 for sprite, pos in sprites:
                     if sprite in (sem1, sem2, sem3, sem4):
                         sem_rect = pygame.Rect(pos, (novo_largura_sem, novo_altura_sem))
-                        game_over = False
                         if sem_rect.collidepoint(x, y):
                             if pos == (100, 450):
                                 faixa1_visivel = not faixa1_visivel
@@ -128,33 +126,31 @@ while True:
                             elif pos == (500, 150):
                                 faixa3_visivel = not faixa3_visivel
                             elif pos == (400, 450):
-                                faixa4_visivel = not faixa4_visivel   
+                                faixa4_visivel = not faixa4_visivel
+
     if estado_jogo == "menu":
         screen.blit(menu_img, menu_rect)
     elif estado_jogo == "jogando":
         if not game_over:
-            screen.blit(menu_img, menu_rect)
-            
-            #contagem regressiva
+            screen.blit(background, (0, 0))
+
+            # Contagem regressiva
             while contagem_regressiva > 0:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         sys.exit()
 
-                screen.blit(background, (0, 0))
                 screen.blit(texto_contagem, texto_contagem_rect)
-
                 pygame.display.flip()
                 pygame.time.delay(1000)
                 contagem_regressiva -= 1
                 texto_contagem = gta_font.render(str(contagem_regressiva) if contagem_regressiva > 0 else "F", True, (255, 255, 255))
-                pygame.display.flip()
 
             tempo_passado = pygame.time.get_ticks()
             tempo_decorrido = tempo_passado - tempo_acumulado
 
-            # anda com o carro
+            # Atualiza posição dos carros e verifica colisões
             for i, (sprite, pos) in enumerate(sprites):
                 if sprite in (carro, carro2, carro3, carro4):
                     velocidade_carro = velocidades[sprite]
@@ -164,16 +160,13 @@ while True:
                         nova_posicao = (pos[0] - velocidade_carro, pos[1])
                     elif sprite == carro4:
                         nova_posicao = (pos[0] + velocidade_carro, pos[1])
-                    sprites[i] = (sprite, nova_posicao)
 
-                    # colisao de carro com carro(atribuindo retangulo)
                     if sprite in (carro, carro2):
                         rect_carro = pygame.Rect(nova_posicao, (novo_largura_carro, novo_altura_carro))
                     else:
                         rect_carro = pygame.Rect(nova_posicao, (novo_altura_carro, novo_largura_carro))
 
-                    parado = {carro: False, carro2: False, carro3: False, carro4: False}
-                    # colisao carro com faixa
+                    parado[sprite] = False
                     if faixa1_visivel and rect_carro.colliderect(faixa1_rect):
                         parado[sprite] = True
                     elif faixa2_visivel and rect_carro.colliderect(faixa2_rect):
@@ -182,21 +175,16 @@ while True:
                         parado[sprite] = True
                     elif faixa4_visivel and rect_carro.colliderect(faixa4_rect):
                         parado[sprite] = True
-                    if not faixa1_visivel and not parado[sprite]:
-                        velocidades[sprite] = 1   
-                    if not faixa2_visivel and not parado[sprite]:
-                        velocidades[sprite] = 1
-                    if not faixa3_visivel and not parado[sprite]:
-                        velocidades[sprite] = 1
-                    if not faixa4_visivel and not parado[sprite]:
-                        velocidades[sprite] = 1    
 
-                    if not parado[sprite]:
-                        sprites[i] = (sprite, nova_posicao)                    
+                    if parado[sprite]:
+                        velocidades[sprite] = 0
+                    else:
+                        velocidades[sprite] = 1
+                        sprites[i] = (sprite, nova_posicao)
 
-                    #colisao de carro com carro(verificando colisao)
-                    for j, (outro_sprite, outra_pos) in enumerate(sprites[i+1:], start=i+1):
-                        if outro_sprite in (carro, carro2, carro3, carro4):
+                    # Verifica colisão entre carros
+                    for j, (outro_sprite, outra_pos) in enumerate(sprites):
+                        if i != j and outro_sprite in (carro, carro2, carro3, carro4):
                             if outro_sprite in (carro, carro2):
                                 rect_outro_carro = pygame.Rect(outra_pos, (novo_largura_carro, novo_altura_carro))
                             else:
@@ -204,22 +192,19 @@ while True:
                             if rect_carro.colliderect(rect_outro_carro):
                                 game_over = True
                                 break
+                    if game_over:
+                        break
 
-            #geração aleatoria de carros 
-            if tempo_decorrido > tempo_para_novo_carro:
+            # Geração aleatória de carros
+            if tempo_decorrido > tempo_para_novo_carro and not game_over:
                 novo_sprite, nova_posicao = random.choice(carros)
                 sprites.append((novo_sprite, nova_posicao))
                 tempo_acumulado = tempo_passado
 
-
-            sprites = [(sprite, pos) for (sprite, pos) in sprites if 0 <= pos[0] <= width and 0 <= pos[1] <= height]
-
-            screen.blit(background, (0, 0))
-
+            # Desenhar tudo na tela
             for sprite, pos in sprites:
                 screen.blit(sprite, pos)
 
-            #desenha as faixas
             if faixa1_visivel:
                 pygame.draw.rect(screen, (255, 0, 0), faixa1_rect)
             if faixa2_visivel:
@@ -228,12 +213,9 @@ while True:
                 pygame.draw.rect(screen, (255, 0, 0), faixa3_rect)
             if faixa4_visivel:
                 pygame.draw.rect(screen, (255, 0, 0), faixa4_rect)
-
         else:
             sprites = [s for s in sprites if s[0] not in (carro, carro2, carro3, carro4)]
             screen.blit(game_over_img, game_over_rect)
-    
-
 
     pygame.display.flip()
     clock.tick(60)
