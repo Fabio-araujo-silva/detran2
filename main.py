@@ -88,7 +88,7 @@ sprites = [
     (sem4, (400, 450))
     ]
 
-game_over_img = pygame.image.load(os.path.join(assets_folder, "gameover.png")).convert()
+game_over_img = pygame.image.load(os.path.join(assets_folder, "gameover2.jpg")).convert()
 game_over_rect = game_over_img.get_rect(center=(width // 2, height // 2))
 menu_img = pygame.image.load(os.path.join(assets_folder, "menu.png")).convert()
 menu_rect = menu_img.get_rect(center=(width // 2, height // 2))
