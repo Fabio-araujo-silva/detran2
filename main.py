@@ -179,7 +179,7 @@ while True:
                     if parado[sprite]:
                         velocidades[sprite] = 0
                     else:
-                        velocidades[sprite] = 1
+                        velocidades[sprite] = 10
                         sprites[i] = (sprite, nova_posicao)
 
                     # Verifica colisão entre carros
