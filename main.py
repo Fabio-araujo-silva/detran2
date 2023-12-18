@@ -74,7 +74,7 @@ faixa4_visivel = False
 
 #controle de tempo
 tempo_para_novo_carro = 1500
-tempo_acumulado = 0
+tempo_acumulado = 00
 
 #velocidade dos carros
 velocidades = {carro: 1, carro2: 1, carro3: 1, carro4: 1}
